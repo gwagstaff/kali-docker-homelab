@@ -7,8 +7,13 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./kali-root:/root
-      - ./kali-db:/var/lib/postgresql/data
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      # - ./kali-db:/var/lib/postgres #TODO
     ports:
       - "8880:80"
     tty: true
+    stdin_open: true
     privileged: true
+    hostname: kali-docker
+    environment:
+      - DISPLAY
