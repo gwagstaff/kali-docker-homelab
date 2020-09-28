@@ -8,6 +8,7 @@ services:
     volumes:
       - ./kali-root:/root
       - /tmp/.X11-unix:/tmp/.X11-unix
+      - /mnt/hdd/shared/hacking:/hacking
       # - ./kali-db:/var/lib/postgres #TODO
     ports:
       - "8880:80"
@@ -15,5 +16,6 @@ services:
     stdin_open: true
     privileged: true
     hostname: kali-docker
+    container_name: kali_docker
     environment:
       - DISPLAY

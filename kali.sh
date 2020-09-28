@@ -12,15 +12,15 @@ start_docker_service() {
 }
 
 start_docker_container() {
-    docker container inspect kali-docker_kali_1 > /dev/null 2>&1 || sudo docker-compose up -d
+    docker container inspect kali_docker > /dev/null 2>&1 || sudo docker-compose up -d
 }
 
 case "$1" in
     "-h"|""|"--help"|"help") echo "$help";;
-    "shell") start_docker_service && start_docker_container && docker-compose exec kali bash;;
+    "shell") start_docker_service && start_docker_container && xhost + && docker-compose exec kali bash;;
     "up") start_docker_service && start_docker_container;;
     "build") start_docker_service && sudo docker-compose up --build -d;;
-    "stop") echo "Stopping instance." && start_docker_service && docker-compose stop && echo "Done.";;
-    "clean") echo "Cleaning instance." && start_docker_service && docker-compose down && echo "Done.";;
+    "stop") echo "Stopping instance." && start_docker_service && docker-compose stop && xhost - && echo "Done.";;
+    "clean") echo "Cleaning instance." && start_docker_service && docker-compose down && xhost - && echo "Done.";;
 esac
 
