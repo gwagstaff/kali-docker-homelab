@@ -12,15 +12,32 @@ start_docker_service() {
 }
 
 start_docker_container() {
-    docker container inspect kali_docker > /dev/null 2>&1 || sudo docker-compose up -d
+    sudo docker-compose -f "$(dirname "$0")/docker-compose.yml" up -d
+}
+
+open_shell() {
+    docker-compose -f "$(dirname "$0")/docker-compose.yml" exec kali bash
 }
 
 case "$1" in
     "-h"|""|"--help"|"help") echo "$help";;
-    "shell") start_docker_service && start_docker_container && xhost + && docker-compose exec kali bash;;
-    "up") start_docker_service && start_docker_container;;
-    "build") start_docker_service && sudo docker-compose up --build -d;;
-    "stop") echo "Stopping instance." && start_docker_service && docker-compose stop && xhost - && echo "Done.";;
-    "clean") echo "Cleaning instance." && start_docker_service && docker-compose down && xhost - && echo "Done.";;
+    "shell") start_docker_service &&
+        start_docker_container &&
+        xhost + &&
+        open_shell;;
+    "up") start_docker_service &&
+        start_docker_container;;
+    "build") start_docker_service &&
+        sudo docker-compose -f "$(dirname "$0")/docker-compose.yml" build ;;
+    "stop") echo "Stopping instance." &&
+        start_docker_service &&
+        docker-compose -f "$(dirname "$0")/docker-compose.yml" stop &&
+        xhost - &&
+        echo "Done stopping.";;
+    "clean") echo "Cleaning instance." &&
+        start_docker_service &&
+        docker-compose -f "$(dirname "$0")/docker-compose.yml" down &&
+        xhost - &&
+        echo "Done cleaning.";;
 esac
 

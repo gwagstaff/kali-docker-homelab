@@ -1,17 +1,17 @@
-version: "3"
+version: "3.4"
 
 services:
   kali:
     build:
       context: .
       dockerfile: Dockerfile
+    network_mode: host
+    user: kali
     volumes:
-      - ./kali-root:/root
+      - ./home-kali:/home/kali
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /mnt/hdd/shared/hacking:/hacking
       # - ./kali-db:/var/lib/postgres #TODO
-    ports:
-      - "8880:80"
     tty: true
     stdin_open: true
     privileged: true
