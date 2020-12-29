@@ -37,6 +37,7 @@ case "$1" in
     "clean") echo "Cleaning instance." &&
         start_docker_service &&
         docker-compose -f "$(dirname "$0")/docker-compose.yml" down &&
+        sudo docker rmi kali-docker_kali &&
         xhost - &&
         echo "Done cleaning.";;
 esac
