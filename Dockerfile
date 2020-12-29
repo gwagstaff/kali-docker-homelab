@@ -18,7 +18,8 @@ RUN apt -y update && \
     kali-desktop-xfce net-tools dbus-x11 x11vnc xvfb psmisc ssh ftp \
     nfs-common cargo zaproxy swaks libssl-dev libffi-dev build-essential \
     python3-dev finalrecon nbtscan nikto onesixtyone oscanner smbmap \
-    smtp-user-enum snmp sslscan sipvicious tnscmd10g whatweb wkhtmltopdf && \
+    smtp-user-enum snmp sslscan sipvicious tnscmd10g whatweb wkhtmltopdf \
+    zsh-autosuggestions zsh-syntax-highlighting bash-completion && \
     tar -xf /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt.tar.gz -C /usr/share/seclists/Passwords/Leaked-Databases/ && \
     echo "kali ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     service postgresql start && \
