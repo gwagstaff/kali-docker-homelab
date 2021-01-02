@@ -19,7 +19,8 @@ RUN apt -y update && \
     nfs-common cargo zaproxy swaks libssl-dev libffi-dev build-essential \
     python3-dev finalrecon nbtscan nikto onesixtyone oscanner smbmap \
     smtp-user-enum snmp sslscan sipvicious tnscmd10g whatweb wkhtmltopdf \
-    zsh-autosuggestions zsh-syntax-highlighting bash-completion && \
+    zsh-autosuggestions zsh-syntax-highlighting bash-completion tree && \
+    wireshark neovim remmina && \
     tar -xf /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt.tar.gz -C /usr/share/seclists/Passwords/Leaked-Databases/ && \
     echo "kali ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     service postgresql start && \

@@ -8,11 +8,11 @@ stop:    Stop kali container
 clean:   Stop and remove kali containers"
 
 start_docker_service() {
-    systemctl is-active --quiet docker || sudo systemctl start docker
+    systemctl is-active --quiet docker || sudo systemctl start docker.service
 }
 
 start_docker_container() {
-    sudo docker-compose -f "$(dirname "$0")/docker-compose.yml" up -d
+    docker-compose -f "$(dirname "$0")/docker-compose.yml" up -d
 }
 
 open_shell() {

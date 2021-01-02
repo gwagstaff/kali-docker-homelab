@@ -11,6 +11,9 @@ services:
       - ./home-kali:/home/kali
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /mnt/hdd/shared/hacking:/hacking
+      - ./default-config/zshrc:/home/kali/.zshrc:ro
+      - ./default-config/bashrc:/home/kali/.bashrc:ro
+      - ./default-config/customrc:/home/kali/.customrc:ro
       # - ./kali-db:/var/lib/postgres #TODO
     tty: true
     stdin_open: true
