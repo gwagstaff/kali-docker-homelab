@@ -1,0 +1,24 @@
+#!/bin/sh
+
+alias burpsuite="java -jar /usr/bin/burpsuite &"
+alias ff="firefox > /dev/null 2> /dev/null &"
+alias zaproxy="zaproxy > /dev/null 2> /dev/null &"
+
+vnc_start() {
+    echo "Starting vnc"
+    (x11vnc -nopw -N -forever -env FD_PROG=startxfce4 -create \
+        -gone 'killall Xvfb' -env X11VNC_CREATE_GEOM="${1:-1024x1080x24}" \
+        -env X11VNC_FINDDISPLAY_ALWAYS_FAILS=1 > /dev/null 2>&1 &)
+    (/usr/share/novnc/utils/launch.sh > /dev/null 2>&1 &)
+    echo "Visit http://kali-docker:6080/vnc.html"
+}
+
+vnc_stop() {
+    echo "Stopping vnc"
+    (pkill websockify > /dev/null 2>&1)
+    (pkill x11vnc > /dev/null 2>&1)
+}
+
+share() {
+    ip -4 -o addr | awk '{print sprintf("%s %s", $2, $4)}' && updog -d /hacking
+}

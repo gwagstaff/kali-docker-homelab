@@ -8,12 +8,16 @@ services:
     network_mode: host
     user: kali
     volumes:
-      - ./home-kali:/home/kali
+      - ./start.sh:/start.sh:ro
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /mnt/hdd/shared/hacking:/hacking
-      - ./default-config/zshrc:/home/kali/.zshrc:ro
-      - ./default-config/bashrc:/home/kali/.bashrc:ro
-      - ./default-config/customrc:/home/kali/.customrc:ro
+      - ${HOME}/.config/zsh/.zshrc:/home/kali/.config/zsh/.zshrc:ro
+      - ${HOME}/.config/bash/bashrc:/home/kali/.config/bash/bashrc:ro
+      - ${HOME}/.config/aliasrc:/home/kali/.config/aliasrc:ro
+      - ${HOME}/.config/envrc:/home/kali/.config/envrc:ro
+      - ${HOME}/.profile:/home/kali/.profile:ro
+      - ${HOME}/.config/ranger/rc.conf:/home/kali/.config/ranger/rc.conf:ro
+      - ${HOME}/.config/vim/init.vim:/home/kali/.config/vim/init.vim:ro
       # - ./kali-db:/var/lib/postgres #TODO
     tty: true
     stdin_open: true
