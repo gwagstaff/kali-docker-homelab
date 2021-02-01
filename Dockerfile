@@ -37,19 +37,21 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # other
     neovim remmina mariadb-client firefox-esr seclists wordlists grc ranger \
     npm golang xclip fzf ripgrep \
-    # TODO
+    # TODO check nessus
     psmisc swaks libssl-dev libffi-dev nbtscan  oscanner sipvicious tnscmd10g \
     onesixtyone && \
-    # todo install rustscan
+    # settings
+    setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap && \
     \
     # install 3rd party packages
     tar -xf /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt.tar.gz \
         -C /usr/share/seclists/Passwords/Leaked-Databases/ && \
-    cargo install feroxbuster && \
+    mkdir -p /usr/local/bin && GOBIN="/usr/local/bin/" go get -u github.com/ffuf/ffuf && \
+    cargo install --root "/usr/local" feroxbuster rustscan && \
     CURR_LSD_VER="$(curl -s https://github.com/Peltoche/lsd/releases/latest | grep -Eo "[0-9]*\.[0-9]*\.[0-9]")" && \
         wget -O "/tmp/lsd" "https://github.com/Peltoche/lsd/releases/download/$CURR_LSD_VER/lsd_${CURR_LSD_VER}_amd64.deb" && \
         sudo dpkg -i "/tmp/lsd" && rm "/tmp/lsd" && \
-    python3 -m pip install updog base64io pynvim && \
+    python3 -m pip install updog base64io pynvim name-that-hash && \
     python3 -m pip install git+https://github.com/Tib3rius/AutoRecon.git && \
     python3 -m pip install git+https://github.com/calebstewart/paramiko && \
     python3 -m pip install git+https://github.com/calebstewart/pwncat.git && \

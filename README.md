@@ -46,10 +46,6 @@ If there are cool apps that make sense to add to this, please submit a pull requ
 
 Once the container is built and running you will see the following new directories that are mapped in to the container:
 
-* `kali-db` - Holds the postgresdb data so you can keep the same database between runs. For example, your Metasploit database.
-
-* `kali-root ` - This is your home directory in the container, aka `/root`.
-
 ## Help
 
 ```bash
