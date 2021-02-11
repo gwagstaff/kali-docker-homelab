@@ -21,7 +21,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # programming
     python3 python3-pip python2 cargo python3-dev \
     # recon / web
-    gobuster dirb dirbuster nikto whatweb wkhtmltopdf burpsuite zaproxy cargo \
+    gobuster dirb dirbuster nikto whatweb wkhtmltopdf burpsuite zaproxy \
     nmap wfuzz enum4linux finalrecon sqlmap wpscan sslscan smtp-user-enum \
     # cracking / bruteforce
     hcxtools hash-identifier hashcat hashcat-utils hashid john hydra \
@@ -46,7 +46,9 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # install 3rd party packages
     tar -xf /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt.tar.gz \
         -C /usr/share/seclists/Passwords/Leaked-Databases/ && \
-    mkdir -p /usr/local/bin && GOBIN="/usr/local/bin/" go get -u github.com/ffuf/ffuf && \
+    export GOBIN="/usr/local/bin/" && mkdir -p /usr/local/bin && \
+    go get -u github.com/ffuf/ffuf && \
+    GO111MODULE=on go get github.com/projectdiscovery/nuclei/v2/cmd/nuclei && \
     cargo install --root "/usr/local" feroxbuster rustscan && \
     CURR_LSD_VER="$(curl -s https://github.com/Peltoche/lsd/releases/latest | grep -Eo "[0-9]*\.[0-9]*\.[0-9]")" && \
         wget -O "/tmp/lsd" "https://github.com/Peltoche/lsd/releases/download/$CURR_LSD_VER/lsd_${CURR_LSD_VER}_amd64.deb" && \
