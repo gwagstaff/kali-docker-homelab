@@ -35,7 +35,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     nfs-common samba smbclient netcat ftp iproute2 iputils-ping telnet \
     net-tools smbmap snmp wireshark \
     # other
-    neovim remmina mariadb-client firefox-esr seclists wordlists grc ranger \
+    neovim remmina remmina-plugin-rdp mariadb-client firefox-esr seclists wordlists grc ranger \
     npm golang xclip fzf ripgrep \
     # TODO check nessus
     psmisc swaks libssl-dev libffi-dev nbtscan  oscanner sipvicious tnscmd10g \
@@ -53,10 +53,11 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     CURR_LSD_VER="$(curl -s https://github.com/Peltoche/lsd/releases/latest | grep -Eo "[0-9]*\.[0-9]*\.[0-9]")" && \
         wget -O "/tmp/lsd" "https://github.com/Peltoche/lsd/releases/download/$CURR_LSD_VER/lsd_${CURR_LSD_VER}_amd64.deb" && \
         sudo dpkg -i "/tmp/lsd" && rm "/tmp/lsd" && \
-    python3 -m pip install updog base64io pynvim name-that-hash && \
+    python3 -m pip install updog base64io pynvim name-that-hash search-that-hash && \
     python3 -m pip install git+https://github.com/Tib3rius/AutoRecon.git && \
     python3 -m pip install git+https://github.com/calebstewart/paramiko && \
     python3 -m pip install git+https://github.com/calebstewart/pwncat.git && \
+    python3 -m pip install ciphey --upgrade && \
     npm install -g neovim && \
     apt -y autoclean && apt -y autoremove && apt -y clean && \
     # user
