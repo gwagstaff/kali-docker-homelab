@@ -43,10 +43,17 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # settings
     setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap && \
     \
+    # create user
+    echo "kali ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    useradd --create-home --shell /bin/zsh --user-group --groups sudo kali && \
+    echo "kali:kali" | chpasswd && \
+    mkdir -p "/home/kali/.config/vim" "/home/kali/.config/ranger" \
+        "/home/kali/.config/zsh" "/home/kali/.config/bash" && \
     # install 3rd party packages
     tar -xf /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt.tar.gz \
         -C /usr/share/seclists/Passwords/Leaked-Databases/ && \
-    export GOBIN="/usr/local/bin/" && mkdir -p /usr/local/bin && \
+    export GOBIN="/usr/local/bin/" && \
+    mkdir -p /usr/local/bin && \
     go get -u github.com/ffuf/ffuf && \
     GO111MODULE=on go get github.com/projectdiscovery/nuclei/v2/cmd/nuclei && \
     cargo install --root "/usr/local" feroxbuster rustscan && \
@@ -60,15 +67,10 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     python3 -m pip install ciphey --upgrade && \
     npm install -g neovim && \
     apt -y autoclean && apt -y autoremove && apt -y clean && \
-    # user
-    # chown kali:kali /start.sh && \
-    echo "kali ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    useradd --create-home --shell /bin/zsh --user-group --groups sudo kali && \
-    echo "kali:kali" | chpasswd && \
-    mkdir -p "/home/kali/.config/vim" "/home/kali/.config/ranger" \
-        "/home/kali/.config/zsh" "/home/kali/.config/bash" && \
+    wget -O /usr/local/bin/findomain https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux && chmod +x /usr/local/bin/findomain && \
+    git clone https://github.com/pwndbg/pwndbg /home/kali/.pwndbg && \
+    cd /home/kali/.pwndbg && ./setup.sh && echo "source /home/kali/.pwndbg/gdbinit.py" >> /home/kali/.gdbinit && \
     chown -R kali:kali /home/kali
-
 
 WORKDIR /home/kali
 

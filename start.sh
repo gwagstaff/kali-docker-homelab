@@ -8,7 +8,7 @@ echo "      nmap rustscan"
 echo "# forced browsing"
 echo "      fuff feroxbuster wfuzz gobuster dirb dirbuster"
 echo "# scanner"
-echo "      nikto whatweb autorecon finalrecon"
+echo "      nikto whatweb autorecon finalrecon reconftw findomain"
 echo "# proxy"
 echo "      zaproxy burpsuite"
 echo "# sql"
@@ -30,4 +30,15 @@ echo "# other"
 echo "      updog cewl psmisc swaks libssl-dev libffi-dev nbtscan "
 echo "      oscanner sipvicious tnscmd10g onesixtyone"
 echo "#########################################################################"
+
+if [ ! -d "$HOME/.reconftw" ]; then
+    export GOROOT=/usr/local/go
+    export GOPATH=$HOME/go
+    git clone https://github.com/six2dez/reconftw.git "$HOME/.reconftw"
+    cd reconftw
+    chmod +x *.sh
+    ./install.sh
+    cd "$HOME"
+fi
+
 /bin/zsh
