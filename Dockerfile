@@ -33,10 +33,10 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     kali-desktop-xfce dbus-x11 x11vnc xvfb novnc \
     # network
     nfs-common samba smbclient netcat ftp iproute2 iputils-ping telnet \
-    net-tools smbmap snmp wireshark \
+    net-tools smbmap snmp wireshark traceroute whois \
     # other
     neovim remmina remmina-plugin-rdp mariadb-client firefox-esr seclists wordlists grc ranger \
-    npm golang xclip fzf ripgrep \
+    npm golang xclip fzf ripgrep cewl \
     # TODO check nessus
     psmisc swaks libssl-dev libffi-dev nbtscan  oscanner sipvicious tnscmd10g \
     onesixtyone && \
@@ -52,10 +52,11 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # install 3rd party packages
     tar -xf /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt.tar.gz \
         -C /usr/share/seclists/Passwords/Leaked-Databases/ && \
-    export GOBIN="/usr/local/bin/" && \
+    export GOBIN="/usr/local/bin" && \
     mkdir -p /usr/local/bin && \
     go get -u github.com/ffuf/ffuf && \
     GO111MODULE=on go get github.com/projectdiscovery/nuclei/v2/cmd/nuclei && \
+    CGO_ENABLED=0 go get -u github.com/liamg/traitor/cmd/traitor && \
     cargo install --root "/usr/local" feroxbuster rustscan && \
     CURR_LSD_VER="$(curl -s https://github.com/Peltoche/lsd/releases/latest | grep -Eo "[0-9]*\.[0-9]*\.[0-9]")" && \
         wget -O "/tmp/lsd" "https://github.com/Peltoche/lsd/releases/download/$CURR_LSD_VER/lsd_${CURR_LSD_VER}_amd64.deb" && \
@@ -68,6 +69,8 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     npm install -g neovim && \
     apt -y autoclean && apt -y autoremove && apt -y clean && \
     wget -O /usr/local/bin/findomain https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux && chmod +x /usr/local/bin/findomain && \
+    wget -O /tmp/rhp.zip "https://github.com/$(curl -q https://github.com/quantumcored/remote_hacker_probe/releases | grep -o "/quantumcored/remote_hacker_probe/releases/download/.*zip" | head -n 1)" && unzip -d /tmp /tmp/rhp.zip && mv /tmp/RHP.jar /usr/local/bin && chmod +x /usr/local/bin/RHP.jar && \
+    wget -O /tmp/get-pip.py "https://bootstrap.pypa.io/2.7/get-pip.py" && python2 /tmp/get-pip.py && rm /tmp/get-pip.py && \
     git clone https://github.com/pwndbg/pwndbg /home/kali/.pwndbg && \
     cd /home/kali/.pwndbg && ./setup.sh && echo "source /home/kali/.pwndbg/gdbinit.py" >> /home/kali/.gdbinit && \
     chown -R kali:kali /home/kali
@@ -75,5 +78,4 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
 WORKDIR /home/kali
 
     # git clone https://github.com/zardus/ctf-tools.git /ctf-tools && \
-    # curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python2 get-pip.py && rm get-pip.py && \
     # service postgresql start && \
