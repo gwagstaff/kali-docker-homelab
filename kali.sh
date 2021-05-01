@@ -16,7 +16,7 @@ start_docker_container() {
 }
 
 open_shell() {
-    docker-compose -f "$(dirname "$0")/docker-compose.yml" exec kali /start.sh
+    docker-compose -f "$(dirname "$0")/docker-compose.yml" exec kali /start.sh $1
 }
 
 case "$1" in
@@ -24,7 +24,7 @@ case "$1" in
     "shell") start_docker_service &&
         start_docker_container &&
         xhost + &&
-        open_shell;;
+        open_shell "$2";;
     "up") start_docker_service &&
         start_docker_container;;
     "build") start_docker_service &&

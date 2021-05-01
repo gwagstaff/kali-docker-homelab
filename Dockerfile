@@ -19,7 +19,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # bash
     bash-completion \
     # programming
-    python3 python3-pip python2 cargo python3-dev \
+    python3 python3-pip python2 cargo python3-dev default-jdk npm golang \
     # recon / web
     gobuster dirb dirbuster nikto whatweb wkhtmltopdf burpsuite zaproxy \
     nmap wfuzz enum4linux finalrecon sqlmap wpscan sslscan smtp-user-enum \
@@ -33,22 +33,25 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     kali-desktop-xfce dbus-x11 x11vnc xvfb novnc \
     # network
     nfs-common samba smbclient netcat ftp iproute2 iputils-ping telnet \
-    net-tools smbmap snmp wireshark traceroute whois \
+    net-tools smbmap snmp wireshark traceroute whois passing-the-hash \
+    # windows
+    crackmapexec python3-impacket \
     # other
     neovim remmina remmina-plugin-rdp mariadb-client firefox-esr seclists wordlists grc ranger \
-    npm golang xclip fzf ripgrep cewl \
+    xclip fzf ripgrep cewl \
     # TODO check nessus
-    psmisc swaks libssl-dev libffi-dev nbtscan  oscanner sipvicious tnscmd10g \
+    psmisc swaks libssl-dev libffi-dev nbtscan oscanner sipvicious tnscmd10g \
     onesixtyone && \
     # settings
     setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap && \
-    \
+    # setup metasploit database
+    service postgresql start && msfdb init && \
     # create user
     echo "kali ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     useradd --create-home --shell /bin/zsh --user-group --groups sudo kali && \
     echo "kali:kali" | chpasswd && \
     mkdir -p "/home/kali/.config/vim" "/home/kali/.config/ranger" \
-        "/home/kali/.config/zsh" "/home/kali/.config/bash" && \
+        "/home/kali/.config/zsh" "/home/kali/.config/bash" "/home/kali/.cache/java/.ZAP" && \
     # install 3rd party packages
     tar -xf /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt.tar.gz \
         -C /usr/share/seclists/Passwords/Leaked-Databases/ && \
@@ -70,10 +73,11 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     apt -y autoclean && apt -y autoremove && apt -y clean && \
     wget -O /usr/local/bin/findomain https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux && chmod +x /usr/local/bin/findomain && \
     wget -O /tmp/rhp.zip "https://github.com/$(curl -q https://github.com/quantumcored/remote_hacker_probe/releases | grep -o "/quantumcored/remote_hacker_probe/releases/download/.*zip" | head -n 1)" && unzip -d /tmp /tmp/rhp.zip && mv /tmp/RHP.jar /usr/local/bin && chmod +x /usr/local/bin/RHP.jar && \
-    wget -O /tmp/get-pip.py "https://bootstrap.pypa.io/2.7/get-pip.py" && python2 /tmp/get-pip.py && rm /tmp/get-pip.py && \
+    wget -O /tmp/get-pip.py "https://bootstrap.pypa.io/pip/2.7/get-pip.py" && python2 /tmp/get-pip.py && rm /tmp/get-pip.py && \
+    curl -o /tmp/ghidra.zip "https://www.ghidra-sre.org/$(curl -q https://www.ghidra-sre.org/ | grep "Download" | grep -Eo "ghidra[^ \"]*\.zip")" && unzip -d /home/kali /tmp/ghidra.zip && \
     git clone https://github.com/pwndbg/pwndbg /home/kali/.pwndbg && \
     cd /home/kali/.pwndbg && ./setup.sh && echo "source /home/kali/.pwndbg/gdbinit.py" >> /home/kali/.gdbinit && \
-    chown -R kali:kali /home/kali
+    chown -R kali:kali /home/kali /usr/share/zaproxy
 
 WORKDIR /home/kali
 

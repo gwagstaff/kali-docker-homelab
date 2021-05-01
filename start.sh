@@ -1,6 +1,11 @@
 #!/bin/sh
 
+# host envs
 . "$HOME/.profile"
+
+# docker specific env
+export TMPDIR=/tmp
+
 echo ""
 echo "#########################################################################"
 echo "# port scanning"
@@ -32,14 +37,15 @@ echo "      updog cewl psmisc swaks libssl-dev libffi-dev nbtscan "
 echo "      oscanner sipvicious tnscmd10g onesixtyone"
 echo "#########################################################################"
 
-if [ ! -d "$HOME/.reconftw" ]; then
-    export GOROOT=/usr/local/go
-    export GOPATH=$HOME/go
-    git clone https://github.com/six2dez/reconftw.git "$HOME/.reconftw"
-    cd .reconftw
-    chmod +x *.sh
-    ./install.sh
-    cd "$HOME"
-fi
+# Installing reconftw results in wired version issues
+#if [ ! -d "$HOME/.reconftw" ]; then
+#    git clone https://github.com/six2dez/reconftw.git "$HOME/.reconftw"
+#    cd .reconftw
+#    chmod +x *.sh
+#    ./install.sh
+#    cd "$HOME"
+#fi
 
-/bin/zsh
+cmd="/bin/zsh"
+[ "$1" != "" ] && cmd="$1"
+$cmd
