@@ -5,8 +5,14 @@
 
 # docker specific env
 export TMPDIR=/tmp
+export FAKETIME="+1h"
+export LD_PRELOAD=/usr/local/lib/faketime/libfaketime.so.1
 
 echo ""
+echo "#########################################################################"
+echo "CHECK: finalrecon enum4linux psmisc swaks libssl-dev libffi-dev nbtscan"
+echo "       oscanner sipvicious tnscmd10g finddomain rhp feroxbuster traitor"
+echo "TODO: compare dirb/dirbuster wordlists with /usr/share/wordlists"
 echo "#########################################################################"
 echo "# port scanning"
 echo "      nmap rustscan"
