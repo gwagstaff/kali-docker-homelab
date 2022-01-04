@@ -11,6 +11,10 @@ start_docker_service() {
     systemctl is-active --quiet docker || sudo systemctl start docker.service
 }
 
+stop_docker_service() {
+    systemctl is-active --quiet docker && sudo systemctl stop docker.service
+}
+
 start_docker_container() {
     docker-compose -f "$(dirname "$0")/docker-compose.yml" up -d
 }
@@ -33,6 +37,7 @@ case "$1" in
         start_docker_service &&
         docker-compose -f "$(dirname "$0")/docker-compose.yml" stop &&
         xhost - &&
+        stop_docker_service &&
         echo "Done stopping.";;
     "clean") echo "Cleaning instance." &&
         start_docker_service &&
