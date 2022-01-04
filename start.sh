@@ -6,7 +6,7 @@
 # docker specific env
 export TMPDIR=/tmp
 export FAKETIME="+1h"
-export LD_PRELOAD=/usr/local/lib/faketime/libfaketime.so.1
+#export LD_PRELOAD=/usr/local/lib/faketime/libfaketime.so.1 # this breaks to many stuff
 
 echo ""
 echo "#########################################################################"
