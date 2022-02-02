@@ -21,8 +21,17 @@
 ## Fork infos
 
 This is my fork of [mikeflynn/kali-docker](https://github.com/mikeflynn/kali-docker). Feel free to fork the original or this version for yourself.
-Make does not open a shell inside the docker-container properly for me, so I rewrote the Makefile to a shell script with pretty much the same functionality.
-To be able to start gui programs within the docker-container I added the X11 volume mapping (unix only).
+I didn't like the idea of using Make to start my "hacker" session, so I rewrote the Makefile to a shell script with pretty much the same functionality.
+
+The follow features were added over time:
+
+- X11 socket mapping to start gui "nativley"
+- vnc function to access the docker container within a broswer
+- popular security related repos
+- popular hacking tools (from packet manager and github)
+- function/alias to help and speed up daily hacking tasks
+- easier integration for configuration files of your linux daily driver
+- example configuration files
 
 # Original (commands updated)
 

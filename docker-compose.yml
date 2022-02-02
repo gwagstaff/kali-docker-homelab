@@ -10,19 +10,17 @@ services:
     volumes:
       - ./start.sh:/start.sh:ro
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - /mnt/hdd/shared/hacking:/hacking
-      - ${HOME}/.config/zsh/.zshrc:/home/kali/.config/zsh/.zshrc:ro
-      - ${HOME}/.config/bash/bashrc:/home/kali/.config/bash/bashrc:ro
-      - ${HOME}/.config/aliasrc:/home/kali/.config/aliasrc:ro
-      - ${HOME}/.config/envrc:/home/kali/.config/envrc:ro
-      - ${HOME}/.profile:/home/kali/.profile:ro
-      - ${HOME}/.config/ranger/rc.conf:/home/kali/.config/ranger/rc.conf:ro
-      - ${HOME}/.config/vim/init.vim:/home/kali/.config/vim/init.vim:ro
-      # - ./kali-db:/var/lib/postgres #TODO
+      - ./default-config/alias:/etc/zsh/zshrc.d/900-alias:ro
+      - ./default-config/userstartup.sh:/etc/zsh/zshrc.d/999-startup:ro # last thing that will be executed
+      - ./default-config/files.txt:/home/kali/.config/files.txt:ro
+      - ./default-config/commands.txt:/home/kali/.config/commands.txt:ro
+      # Put your rc in /etc/zsh/zshrc.d to source them automaticly; see override file
     tty: true
     stdin_open: true
     privileged: true
     hostname: kali-docker
-    container_name: kali_docker
+    container_name: kali-docker
     environment:
       - DISPLAY
+      - FAKETIME="+1h"
+      #- LD_PRELOAD=/usr/local/lib/faketime/libfaketime.so.1 # this breaks to many stuff

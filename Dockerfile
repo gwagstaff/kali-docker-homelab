@@ -22,7 +22,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     python3 python3-pip python2 cargo python3-dev default-jdk npm golang \
     # recon / web
     gobuster dirb dirbuster nikto whatweb wkhtmltopdf burpsuite zaproxy ffuf \
-    nmap wfuzz finalrecon sqlmap wpscan sslscan smtp-user-enum \
+    nmap wfuzz finalrecon sqlmap wpscan sslscan smtp-user-enum feroxbuster \
     # cracking / bruteforce
     hcxtools hashcat hashcat-utils john hydra \
     # binary exploitation
@@ -40,11 +40,11 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     crackmapexec python3-impacket enum4linux passing-the-hash samba smbclient \
     smbmap responder impacket-scripts bloodhound \
     # other
-    neovim remmina remmina-plugin-rdp mariadb-client firefox-esr seclists wordlists grc ranger \
+    neovim remmina remmina-plugin-rdp  firefox-esr seclists wordlists grc ranger \
     xclip fzf ripgrep cewl jq redis-tools default-mysql-server \
     # TODO check
     psmisc swaks libssl-dev libffi-dev nbtscan oscanner sipvicious tnscmd10g \
-    onesixtyone && \
+    onesixtyone && \ 
     # clear apt cache/packages
     apt -y autoclean && apt -y autoremove && apt -y clean
 
@@ -57,33 +57,67 @@ RUN setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap && \
     echo "kali ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     useradd --create-home --shell /bin/zsh --user-group --groups sudo kali && \
     echo "kali:kali" | chpasswd && \
-    mkdir -p "/home/kali/.config/vim" "/home/kali/.config/ranger" \
-        "/home/kali/.config/zsh" "/home/kali/.config/bash" "/home/kali/.cache/java/.ZAP" && \
+    mkdir -p /etc/zsh/zshrc.d && \
+    printf 'if [ -d /etc/zsh/zshrc.d ]; then\n  for i in /etc/zsh/zshrc.d/*; do\n    if [ -r $i ]; then\n      . $i\n    fi\n  done\n  unset i\nfi' >> /etc/zsh/zshrc && \
     tar -xf /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt.tar.gz \
         -C /usr/share/seclists/Passwords/Leaked-Databases/ && \
-    git clone https://github.com/wolfcw/libfaketime /tmp/libfaketime && cd /tmp/libfaketime/src && make install && rm -rf /tmp/libfaketime && \
+    git clone https://github.com/wolfcw/libfaketime /tmp/libfaketime && make -C /tmp/libfaketime/src install && rm -rf /tmp/libfaketime && \
+    wget -O /tmp/lsd.deb "$(curl -s https://api.github.com/repos/Peltoche/lsd/releases/latest | jq -r '.assets[].browser_download_url' | grep 'lsd_.*amd64')" && apt install /tmp/lsd.deb && rm /tmp/lsd.deb && \
     npm install -g neovim
 
-# install go (packages)
-RUN export GOBIN="/usr/local/bin" && \
-    mkdir -p /usr/local/bin && \
-    GO111MODULE=on go get github.com/projectdiscovery/nuclei/v2/cmd/nuclei
-
 # install python packages
-RUN python3 -m pip install updog pynvim name-that-hash search-that-hash bloodhound && \
+RUN python3 -m pip install updog pynvim name-that-hash search-that-hash && \
     python3 -m pip install git+https://github.com/Tib3rius/AutoRecon.git && \
     python3 -m pip install git+https://github.com/calebstewart/paramiko && \
     python3 -m pip install ciphey --upgrade && \
     wget -O /tmp/get-pip.py "https://bootstrap.pypa.io/pip/2.7/get-pip.py" && python2 /tmp/get-pip.py && rm /tmp/get-pip.py
 
-# other
-RUN wget -O /tmp/lsd.deb "$(curl -s https://api.github.com/repos/Peltoche/lsd/releases/latest | jq -r '.assets[].browser_download_url' | grep 'lsd_.*amd64')" && apt install /tmp/lsd.deb && rm /tmp/lsd.deb && \
+# clone popular repos
+RUN mkdir -p /opt/repos && \
+    git clone https://github.com/swisskyrepo/PayloadsAllTheThings.git /opt/repos/PayloadsAllTheThings && \
+    git clone https://github.com/samratashok/nishang.git /opt/repos/nishang && \
+    git clone https://github.com/FireFart/dirtycow.git /opt/repos/dirtycow && \
+    git clone https://github.com/dirkjanm/krbrelayx.git /opt/repos/krbrelayx && \
+    git clone https://github.com/rebootuser/LinEnum.git /opt/repos/LinEnum && \
+    git clone https://github.com/mzet-/linux-exploit-suggester.git /opt/repos/linux-exploit-suggester && \
+    git clone https://github.com/diego-treitos/linux-smart-enumeration.git /opt/repos/linux-smart-enumeration && \
+    git clone https://github.com/CISOfy/lynis.git /opt/repos/lynis && \
+    git clone https://github.com/ivan-sincek/php-reverse-shell.git /opt/repos/php-reverse-shell && \
+    git clone https://github.com/mostaphabahadou/postenum.git /opt/repos/postenum && \
+    git clone https://github.com/PowerShellMafia/PowerSploit.git /opt/repos/PowerSploit && \
+    git clone https://github.com/diegocr/netcat.git /opt/repos/netcat
+
+# files for external usage
+RUN mkdir -p /opt/external && \ 
+    wget -O /tmp/chisel_linux64.gz "$(curl -s https://api.github.com/repos/jpillora/chisel/releases/latest | jq -r '.assets[].browser_download_url' | grep 'chisel_.*_linux_amd64')" && gunzip /tmp/chisel_linux64.gz && mv /tmp/chisel_linux64 /opt/external && \
+    wget -O /tmp/chisel_linux86.gz "$(curl -s https://api.github.com/repos/jpillora/chisel/releases/latest | jq -r '.assets[].browser_download_url' | grep 'chisel_.*_linux_386')" && gunzip /tmp/chisel_linux86.gz && mv /tmp/chisel_linux86 /opt/external && \
+    wget -O /tmp/chisel_win64.gz "$(curl -s https://api.github.com/repos/jpillora/chisel/releases/latest | jq -r '.assets[].browser_download_url' | grep 'chisel_.*_windows_amd64')" && gunzip /tmp/chisel_win64.gz && mv /tmp/chisel_win64 /opt/external/chisel_win64.exe && \
+    wget -O /tmp/chisel_win86.gz "$(curl -s https://api.github.com/repos/jpillora/chisel/releases/latest | jq -r '.assets[].browser_download_url' | grep 'chisel_.*_windows_386')" && gunzip /tmp/chisel_win86.gz && mv /tmp/chisel_win86 /opt/external/chisel_win86.exe && \
+    wget -O /opt/external/pspy32 "$(curl -s https://api.github.com/repos/DominicBreuker/pspy/releases/latest | jq -r '.assets[].browser_download_url' | grep 'pspy32$')" && \
+    wget -O /opt/external/pspy32s "$(curl -s https://api.github.com/repos/DominicBreuker/pspy/releases/latest | jq -r '.assets[].browser_download_url' | grep 'pspy32s')" && \
+    wget -O /opt/external/pspy64 "$(curl -s https://api.github.com/repos/DominicBreuker/pspy/releases/latest | jq -r '.assets[].browser_download_url' | grep 'pspy64$')" && \
+    wget -O /opt/external/pspy64s "$(curl -s https://api.github.com/repos/DominicBreuker/pspy/releases/latest | jq -r '.assets[].browser_download_url' | grep 'pspy64s')" && \
+    wget -O /opt/external/linpeas.sh "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'linpeas.sh')" && \
+    wget -O /opt/external/linpeas_linux_386 "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'linpeas_linux_386')" && \
+    wget -O /opt/external/linpeas_linux_amd64 "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'linpeas_linux_amd64')" && \
+    wget -O /opt/external/winPEAS.bat "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'winPEAS.bat')" && \
+    wget -O /opt/external/winPEASany.exe "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'winPEASany.exe')" && \
+    wget -O /opt/external/winPEASany_ofs.exe "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'winPEASany_ofs.exe')" && \
+    wget -O /opt/external/winPEASx64.exe "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'winPEASx64.exe')" && \
+    wget -O /opt/external/winPEASx64_ofs.exe "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'winPEASx64_ofs.exe')" && \
+    wget -O /opt/external/winPEASx86.exe "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'winPEASx86.exe')" && \
+    wget -O /opt/external/winPEASx86_ofs.exe "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'winPEASx86_ofs.exe')" && \
+    wget -O /tmp/sysint.zip 'https://download.sysinternals.com/files/SysinternalsSuite.zip' && unzip /tmp/sysint.zip -d /opt/external && rm /opt/external/*.chm /opt/external/*.txt /tmp/sysint.zip
+
+# other tools
+RUN mkdir -p /usr/local/bin && \
+    wget -O /tmp/rustscan.deb "$(curl -s https://api.github.com/repos/RustScan/RustScan/releases/latest | jq -r '.assets[].browser_download_url' | grep 'rustscan_.*_amd64')" && apt install /tmp/rustscan.deb && rm /tmp/rustscan.deb && \
+    wget -O /tmp/nuclei.zip "$(curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest | jq -r '.assets[].browser_download_url' | grep 'nuclei_.*_linux_amd64')" && unzip /tmp/nuclei.zip -d /usr/local/bin && rm /tmp/nuclei.zip && \
     wget -O /usr/local/bin/findomain https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux && chmod +x /usr/local/bin/findomain && \
     wget -O /usr/local/bin/gitdumper.sh https://raw.githubusercontent.com/internetwache/GitTools/master/Dumper/gitdumper.sh && chmod +x /usr/local/bin/gitdumper.sh && \
     wget -O /usr/local/bin/extractor.sh https://raw.githubusercontent.com/internetwache/GitTools/master/Extractor/extractor.sh && chmod +x /usr/local/bin/extractor.sh && \
     wget -O /usr/local/bin/gitfinder.py https://raw.githubusercontent.com/internetwache/GitTools/master/Finder/gitfinder.py && chmod +x /usr/local/bin/gitfinder.py && \
     wget -O /usr/local/bin/enum4linux-ng.py https://raw.githubusercontent.com/cddmp/enum4linux-ng/master/enum4linux-ng.py && chmod +x /usr/local/bin/enum4linux-ng.py && \
-    cargo install --root "/usr/local" feroxbuster rustscan && \
     gem install evil-winrm && \
     git clone https://github.com/pwndbg/pwndbg /home/kali/.pwndbg && cd /home/kali/.pwndbg && /home/kali/.pwndbg/setup.sh && echo "source /home/kali/.pwndbg/gdbinit.py" >> /home/kali/.gdbinit && \
     chown -R kali:kali /home/kali /usr/share/zaproxy && \
@@ -94,5 +128,5 @@ WORKDIR /home/kali
 # Tools not installed by default
 # https://github.com/zardus/ctf-tools.git   # ctf tools
 # https://github.com/noraj/haiti            # hashidentifier
-# wget -O /tmp/rhp-ext "$(curl -s -L https://api.github.com/repos/quantumcore/remote_hacker_probe/releases/latest | jq -r '.assets[].browser_download_url')" && atool -X /tmp/rhp /tmp/rhp-ext && mv /tmp/rhp/RHP.jar /usr/local/bin && chmod +x /usr/local/bin/RHP.jar && rm -rf /tmp/rhp-ext /tmp/rhp && \
 # Nessus
+# mariadb-client # currently broken

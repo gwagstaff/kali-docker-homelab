@@ -16,11 +16,11 @@ stop_docker_service() {
 }
 
 start_docker_container() {
-    docker-compose -f "$(dirname "$0")/docker-compose.yml" up -d
+    docker-compose -f "$(dirname "$0")/docker-compose.override.yml" -f "$(dirname "$0")/docker-compose.yml" up -d
 }
 
 open_shell() {
-    docker-compose -f "$(dirname "$0")/docker-compose.yml" exec kali /start.sh $1
+    docker-compose -f "$(dirname "$0")/docker-compose.override.yml" -f "$(dirname "$0")/docker-compose.yml" exec kali /start.sh $1
 }
 
 case "$1" in
@@ -32,16 +32,16 @@ case "$1" in
     "up") start_docker_service &&
         start_docker_container;;
     "build") start_docker_service &&
-        sudo docker-compose -f "$(dirname "$0")/docker-compose.yml" build ;;
+        sudo docker-compose -f "$(dirname "$0")/docker-compose.override.yml" -f "$(dirname "$0")/docker-compose.yml" build ;;
     "stop") echo "Stopping instance." &&
         start_docker_service &&
-        docker-compose -f "$(dirname "$0")/docker-compose.yml" stop &&
+        docker-compose -f "$(dirname "$0")/docker-compose.override.yml" -f "$(dirname "$0")/docker-compose.yml" stop &&
         xhost - &&
         stop_docker_service &&
         echo "Done stopping.";;
     "clean") echo "Cleaning instance." &&
         start_docker_service &&
-        docker-compose -f "$(dirname "$0")/docker-compose.yml" down &&
+        docker-compose -f "$(dirname "$0")/docker-compose.override.yml" -f "$(dirname "$0")/docker-compose.yml" down &&
         sudo docker rmi kali-docker_kali &&
         xhost - &&
         echo "Done cleaning.";;

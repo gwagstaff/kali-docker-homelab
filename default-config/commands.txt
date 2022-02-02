@@ -1,0 +1,26 @@
+burpsuite
+ff
+zaproxy
+vnc_start
+vnc_stop
+share
+urldecode
+urlencode
+sshgen # generate ssh keys
+interfaceip # get main interface ip
+eh # edit /etc/hosts
+sp # searchsploit
+ncl # netcat listen
+phpwebsh # print php webshell
+brev # print bash reverse shell
+portscan # default rustscan port
+ni # nikto scan
+er # export rhost
+ffuf_web # default web discovery
+ffuf_vhost # default vhost discovery
+dl_curr # generate download command for files in current dir
+dl_curr_sel # generate download command for files in current dir and filter with fzf
+copy_file # copy commen files
+edit_command # read string vom stdin; edit in $EDITOR; run 
+edit_history # edit command from history and run
+show_commands # show this list
