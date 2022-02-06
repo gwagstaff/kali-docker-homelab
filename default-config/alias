@@ -2,7 +2,7 @@
 unalias -m rm
 unalias -m dig
 
-alias burpsuite="java -jar /usr/bin/burpsuite &"
+alias burpsuite="burpsuite &"
 alias ff="firefox > /dev/null 2> /dev/null &"
 alias zaproxy="zaproxy > /dev/null 2> /dev/null &"
 alias sp="searchsploit"
@@ -129,7 +129,7 @@ ffuf_web() {
   ffuf_out="ffuf-$1-$2-$3"
   echo "Executing and copied to clipboard:"
   echo "ffuf -c -u "$1://$2:$3/FUZZ" -w /usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt -o "$ffuf_out/summary.txt" -recursion -e ".htm,.py,.sh,.php,.txt,.md,.html,.asp,.aspx,.jsp" -od "$ffuf_out" -mc "200,204,301,302,307,401,405,403""
-  echo "ffuf -c -u "$1://$2:$3/FUZZ" -w /usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt -o "$ffuf_out/summary.txt" -recursion -e ".htm,.py,.sh,.php,.txt,.md,.html,.asp,.aspx,.jsp" -od "$ffuf_out" -mc "200,204,301,302,307,401,405,403"" | xlip -selection clipboard
+  echo "ffuf -c -u "$1://$2:$3/FUZZ" -w /usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt -o "$ffuf_out/summary.txt" -recursion -e ".htm,.py,.sh,.php,.txt,.md,.html,.asp,.aspx,.jsp" -od "$ffuf_out" -mc "200,204,301,302,307,401,405,403"" | xclip -selection clipboard
   ffuf -c -u "$1://$2:$3/FUZZ" -w /usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt -o "$ffuf_out/summary.txt" -recursion -e ".htm,.py,.sh,.php,.txt,.md,.html,.asp,.aspx,.jsp" -od "$ffuf_out" -mc "200,204,301,302,307,401,405,403"
 }
 
@@ -139,7 +139,7 @@ ffuf_vhost() {
   ffuf_out="ffuf-vhost-$1-$2-$3"
   echo "Executing and copied to clipboard:"
   echo "ffuf -c -u "$1://$2:$3" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -o "$ffuf_out/summary.txt" -od "$ffuf_out" -H "Host: FUZZ.$2" -fs $4"
-  echo "ffuf -c -u "$1://$2:$3" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -o "$ffuf_out/summary.txt" -od "$ffuf_out" -H "Host: FUZZ.$2" -fs $4" | xlip -selection clipboard
+  echo "ffuf -c -u "$1://$2:$3" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -o "$ffuf_out/summary.txt" -od "$ffuf_out" -H "Host: FUZZ.$2" -fs $4" | xclip -selection clipboard
   ffuf -c -u "$1://$2:$3" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -o "$ffuf_out/summary.txt" -od "$ffuf_out" -H "Host: FUZZ.$2" -fs $4
 }
 
