@@ -1,14 +1,10 @@
 version: "3.4"
 
-services:
-  kali:
-    volumes:
-      # Put your rc in /etc/zsh/zshrc.d to source them automaticly
-      - ${HOME}/.config/zsh/.zshrc:/etc/zsh/zshrc.d/003-zshrc:ro
-      - ${HOME}/.config/aliasrc:/etc/zsh/zshrc.d/002-host-alias:ro
-      - ${HOME}/.config/envrc:/etc/zsh/zshrc.d/001-envrc:ro
-      # Other configs
-      - ${HOME}/.config/ranger/rc.conf:/home/kali/.config/ranger/rc.conf:ro
-      - ${HOME}/.config/vim/init.vim:/home/kali/.config/vim/init.vim:ro
-      # - ./kali-db:/var/lib/postgres #TODO
-
+# services:
+#   kali:
+#     volumes:
+#       # Put your rc in /etc/zsh/zshrc.d to source them automaticly
+#       #- ${HOME}/.zshrc:/etc/zsh/zshrc.d/003-zshrc:ro
+#       # - ${HOME}/.config/aliasrc:/etc/zsh/zshrc.d/002-host-alias:ro
+#       # - ${HOME}/.config/envrc:/etc/zsh/zshrc.d/001-envrc:ro
+#       # - ./kali-db:/var/lib/postgres #TODO
