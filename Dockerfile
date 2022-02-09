@@ -19,7 +19,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # bash
     bash-completion \
     # programming
-    python3 python3-pip python2 cargo python3-dev default-jdk npm golang \
+    python3 python3-pip python2 cargo python3-dev python3-venv default-jdk npm golang yarn \
     # recon / web
     gobuster dirb dirbuster nikto whatweb wkhtmltopdf burpsuite zaproxy ffuf \
     nmap wfuzz finalrecon sqlmap wpscan sslscan smtp-user-enum feroxbuster \
@@ -51,6 +51,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
 
     # General
 RUN setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap && \
+    sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen && \
     # setup metasploit database
     service postgresql start && msfdb init && \
     # create user
@@ -61,18 +62,16 @@ RUN setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap && \
     printf 'if [ -d /etc/zsh/zshrc.d ]; then\n  for i in /etc/zsh/zshrc.d/*; do\n    if [ -r $i ]; then\n      . $i\n    fi\n  done\n  unset i\nfi' >> /etc/zsh/zshrc && \
     tar -xf /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt.tar.gz \
         -C /usr/share/seclists/Passwords/Leaked-Databases/ && \
-    git clone https://github.com/wolfcw/libfaketime /tmp/libfaketime && make -C /tmp/libfaketime/src install && rm -rf /tmp/libfaketime && \
-    wget -O /tmp/lsd.deb "$(curl -s https://api.github.com/repos/Peltoche/lsd/releases/latest | jq -r '.assets[].browser_download_url' | grep 'lsd_.*amd64')" && apt install /tmp/lsd.deb && rm /tmp/lsd.deb && \
-    npm install -g neovim
+    git clone https://github.com/wolfcw/libfaketime /tmp/libfaketime && make -C /tmp/libfaketime/src install && rm -rf /tmp/libfaketime
 
 # install python packages
-RUN python3 -m pip install updog pynvim name-that-hash search-that-hash && \
+RUN python3 -m pip install updog name-that-hash search-that-hash && \
     python3 -m pip install git+https://github.com/Tib3rius/AutoRecon.git && \
     python3 -m pip install git+https://github.com/calebstewart/paramiko && \
     python3 -m pip install ciphey --upgrade && \
     wget -O /tmp/get-pip.py "https://bootstrap.pypa.io/pip/2.7/get-pip.py" && python2 /tmp/get-pip.py && rm /tmp/get-pip.py
 
-# clone popular repos
+# clone usefull repos
 RUN mkdir -p /opt/repos && \
     git clone https://github.com/swisskyrepo/PayloadsAllTheThings.git /opt/repos/PayloadsAllTheThings && \
     git clone https://github.com/samratashok/nishang.git /opt/repos/nishang && \
@@ -85,7 +84,9 @@ RUN mkdir -p /opt/repos && \
     git clone https://github.com/ivan-sincek/php-reverse-shell.git /opt/repos/php-reverse-shell && \
     git clone https://github.com/mostaphabahadou/postenum.git /opt/repos/postenum && \
     git clone https://github.com/PowerShellMafia/PowerSploit.git /opt/repos/PowerSploit && \
-    git clone https://github.com/diegocr/netcat.git /opt/repos/netcat
+    git clone https://github.com/diegocr/netcat.git /opt/repos/netcat && \
+    git clone https://github.com/Greenwolf/ntlm_theft && /opt/repos/ntlm_theft && \
+    git clone https://github.com/bitsadmin/wesng && /opt/repos/wesng
 
 # files for external usage
 RUN mkdir -p /opt/external && \ 
@@ -107,7 +108,16 @@ RUN mkdir -p /opt/external && \
     wget -O /opt/external/winPEASx64_ofs.exe "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'winPEASx64_ofs.exe')" && \
     wget -O /opt/external/winPEASx86.exe "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'winPEASx86.exe')" && \
     wget -O /opt/external/winPEASx86_ofs.exe "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'winPEASx86_ofs.exe')" && \
-    wget -O /tmp/sysint.zip 'https://download.sysinternals.com/files/SysinternalsSuite.zip' && unzip /tmp/sysint.zip -d /opt/external && rm /opt/external/*.chm /opt/external/*.txt /tmp/sysint.zip
+    wget -O /tmp/sysint.zip 'https://download.sysinternals.com/files/SysinternalsSuite.zip' && unzip /tmp/sysint.zip -d /opt/external && rm /opt/external/*.chm /opt/external/*.txt /tmp/sysint.zip && \
+    mkdir /tmp/mimi && wget -O /tmp/mimi/mimikatz.zip "$(curl -s https://api.github.com/repos/gentilkiwi/mimikatz/releases/latest | jq -r '.assets[].browser_download_url' | grep 'mimikatz_.*.zip')" && \
+    unzip /tmp/mimi/mimikatz.zip && cp /tmp/mimi/Win32/mimikatz.exe /opt/external/mimikatz32.exe && cp /tmp/mimi/Win32/mimilove.exe /opt/external/mimilove.exe && cp /tmp/mimi/x64/mimikatz.exe /opt/external/mimikatz64.exe && rm -rf /tmp/mimi && \
+    wget -O /opt/external/traitor-386 "$(curl -s https://api.github.com/repos/liamg/traitor/releases/latest | jq -r '.assets[].browser_download_url' | grep 'traitor-386')" && \
+    wget -O /opt/external/traitor-amd64 "$(curl -s https://api.github.com/repos/liamg/traitor/releases/latest | jq -r '.assets[].browser_download_url' | grep 'traitor-amd64')" && \
+    wget -O /opt/external/SharpWeb.exe "$(curl -s https://api.github.com/repos/liamg/traitor/releases/latest | jq -r '.assets[].browser_download_url' | grep '.*.exe')" && \
+    mkdir -p /opt/external/SharpCollection && git clone https://github.com/Flangvik/SharpCollection /opt/external/SharpCollection
+
+COPY ./default-config/bashrc /home/kali/.bashrc
+COPY ./default-config/zshrc /home/kali/.zshrc
 
 # other tools
 RUN mkdir -p /usr/local/bin && \
