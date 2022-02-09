@@ -10,10 +10,13 @@ services:
     volumes:
       - ./start.sh:/start.sh:ro
       - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./default-config/env:/etc/zsh/zshrc.d/100-env:ro
+      - ./default-config/zshrc:/etc/zsh/zshrc.d/800-zshrc:ro
       - ./default-config/alias:/etc/zsh/zshrc.d/900-alias:ro
       - ./default-config/userstartup.sh:/etc/zsh/zshrc.d/999-startup:ro # last thing that will be executed
       - ./default-config/files.txt:/home/kali/.config/files.txt:ro
       - ./default-config/commands.txt:/home/kali/.config/commands.txt:ro
+      - ./default-config/repos.txt:/home/kali/.config/repos.txt:ro
       # Put your rc in /etc/zsh/zshrc.d to source them automaticly; see override file
     tty: true
     stdin_open: true
