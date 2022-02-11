@@ -85,8 +85,8 @@ RUN mkdir -p /opt/repos && \
     git clone https://github.com/mostaphabahadou/postenum.git /opt/repos/postenum && \
     git clone https://github.com/PowerShellMafia/PowerSploit.git /opt/repos/PowerSploit && \
     git clone https://github.com/diegocr/netcat.git /opt/repos/netcat && \
-    git clone https://github.com/Greenwolf/ntlm_theft && /opt/repos/ntlm_theft && \
-    git clone https://github.com/bitsadmin/wesng && /opt/repos/wesng
+    git clone https://github.com/Greenwolf/ntlm_theft /opt/repos/ntlm_theft && \
+    git clone https://github.com/bitsadmin/wesng /opt/repos/wesng
 
 # files for external usage
 RUN mkdir -p /opt/external && \ 
@@ -110,10 +110,10 @@ RUN mkdir -p /opt/external && \
     wget -O /opt/external/winPEASx86_ofs.exe "$(curl -s https://api.github.com/repos/carlospolop/PEASS-ng/releases/latest | jq -r '.assets[].browser_download_url' | grep 'winPEASx86_ofs.exe')" && \
     wget -O /tmp/sysint.zip 'https://download.sysinternals.com/files/SysinternalsSuite.zip' && unzip /tmp/sysint.zip -d /opt/external && rm /opt/external/*.chm /opt/external/*.txt /tmp/sysint.zip && \
     mkdir /tmp/mimi && wget -O /tmp/mimi/mimikatz.zip "$(curl -s https://api.github.com/repos/gentilkiwi/mimikatz/releases/latest | jq -r '.assets[].browser_download_url' | grep 'mimikatz_.*.zip')" && \
-    unzip /tmp/mimi/mimikatz.zip && cp /tmp/mimi/Win32/mimikatz.exe /opt/external/mimikatz32.exe && cp /tmp/mimi/Win32/mimilove.exe /opt/external/mimilove.exe && cp /tmp/mimi/x64/mimikatz.exe /opt/external/mimikatz64.exe && rm -rf /tmp/mimi && \
+    unzip /tmp/mimi/mimikatz.zip -d /tmp/mimi && cp /tmp/mimi/Win32/mimikatz.exe /opt/external/mimikatz32.exe && cp /tmp/mimi/Win32/mimilove.exe /opt/external/mimilove.exe && cp /tmp/mimi/x64/mimikatz.exe /opt/external/mimikatz64.exe && rm -rf /tmp/mimi && \
     wget -O /opt/external/traitor-386 "$(curl -s https://api.github.com/repos/liamg/traitor/releases/latest | jq -r '.assets[].browser_download_url' | grep 'traitor-386')" && \
     wget -O /opt/external/traitor-amd64 "$(curl -s https://api.github.com/repos/liamg/traitor/releases/latest | jq -r '.assets[].browser_download_url' | grep 'traitor-amd64')" && \
-    wget -O /opt/external/SharpWeb.exe "$(curl -s https://api.github.com/repos/liamg/traitor/releases/latest | jq -r '.assets[].browser_download_url' | grep '.*.exe')" && \
+    wget -O /opt/external/SharpWeb.exe "$(curl -s https://api.github.com/repos/djhohnstein/SharpWeb/releases/latest | jq -r '.assets[].browser_download_url' | grep '.*.exe')" && \
     mkdir -p /opt/external/SharpCollection && git clone https://github.com/Flangvik/SharpCollection /opt/external/SharpCollection
 
 COPY ./default-config/bashrc /home/kali/.bashrc

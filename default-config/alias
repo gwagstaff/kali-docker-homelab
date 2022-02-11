@@ -47,9 +47,11 @@ interfaceip() {
   interfaces="$(ip -4 -o addr | awk '{print sprintf("%s %s", $2, $4)}')"
   wlan="$(echo "$interfaces" | grep -i "wlp")"
   enp="$(echo "$interfaces" | grep -i "enp")"
+  eth="$(echo "$interfaces" | grep -i "eth")"
   tun="$(echo "$interfaces" | grep -i "tun")"
   [ "$wlan" != "" ] && address="$(echo "$wlan" | cut -d " " -f 2 | cut -d "/" -f 1)"
   [ "$enp" != "" ] && address="$(echo "$enp" | cut -d " " -f 2 | cut -d "/" -f 1)"
+  [ "$eth" != "" ] && address="$(echo "$eth" | cut -d " " -f 2 | cut -d "/" -f 1)"
   [ "$tun" != "" ] && address="$(echo "$tun" | cut -d " " -f 2 | cut -d "/" -f 1)"
   echo "$address"
 }
