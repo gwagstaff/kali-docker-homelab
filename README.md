@@ -25,15 +25,25 @@ I didn't like the idea of using Make to start my "hacker" session, so I rewrote 
 
 The follow features were added over time:
 
-- X11 socket mapping to start gui "nativley"
-- vnc function to access the docker container within a broswer
+- X11 socket mapping to start gui "natively"
+- vnc function to access the docker container within a browser
 - popular security related repos
 - popular hacking tools (from packet manager and github)
 - function/alias to help and speed up daily hacking tasks
 - easier integration for configuration files of your linux daily driver
 - example configuration files
 
-# Original (commands updated)
+## Docker
+
+The prebuild image is also available on dockerhub:
+
+```bash
+docker pull braunbearded/kali-docker:latest
+```
+
+The image is quite big so keep that in mind.
+
+# Original (updated)
 
 I wasn't satisfied with any of the existing Kali Docker setups, so I made my own that has a more efficient Dockerfile and a custom set of software.
 
@@ -53,7 +63,7 @@ If there are cool apps that make sense to add to this, please submit a pull requ
 > ./kali.sh shell
 ```
 
-Once the container is built and running you will see the following new directories that are mapped in to the container:
+Once the container is built and running you will are attached to a shell within docker.
 
 ## Help
 
@@ -69,4 +79,4 @@ clean:   Stop and remove kali containers
 
 ## How to Add Apps
 
-Once in the Kali shell you can add them as you normally would with `apt install ...`, but if you want the apps already in place upon rebuild you can edit line 9 of the Dockerfile to include whatever app you'd like. If you would like to add libraries that aren't available via `apt`, they can be copied in to the `./kali-root` directory and they will be instantly available in the container.
+Once in the Kali shell you can add them as you normally would with `apt install ...`, but if you want the apps already in place upon rebuild you can edit the Dockerfile to include whatever app you'd like.
