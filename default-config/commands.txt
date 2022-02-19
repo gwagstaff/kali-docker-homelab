@@ -24,3 +24,11 @@ copy_file # copy commen files
 edit_command # read string vom stdin; edit in $EDITOR; run 
 edit_history # edit command from history and run
 show_commands # show this list
+lsa # long listing
+md # mkdir with parent
+rrm # rm recursively
+f # open ranger
+e # open lvim
+update_repos # update repos in /opt/repos
+update_external_tools # update external tools in /opt/external
+shb # search in hacking handbook
