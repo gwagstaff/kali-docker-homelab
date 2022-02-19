@@ -4,7 +4,7 @@
 
 # lunarvim
 export PATH=~/.npm-global/bin:$PATH
-[ ! -d "$HOME/.config/lvim" ] && mkdir -p $HOME/.npm-global && npm config set prefix "$HOME/.npm-global" && wget -O /tmp/lunar-install.sh https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh && bash /tmp/lunar-install.sh && rm /tmp/lunar-install.sh && echo "vim.opt.relativenumber = true" >> "$HOME/.config/lvim/config.lua"
+[ ! -d "$HOME/.config/lvim" ] && mkdir -p $HOME/.npm-global && npm config set prefix "$HOME/.npm-global" && wget -O /tmp/lunar-install.sh https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh && bash /tmp/lunar-install.sh && rm /tmp/lunar-install.sh && echo "vim.opt.relativenumber = true" >> "$HOME/.config/lvim/config.lua" && /home/kali/.local/bin/lvim +PackerCompile +qa
 npm list --depth 1 -g neovim > /dev/null || npm install -g neovim
 pip3 show pynvim > /dev/null || sudo python3 -m pip install pynvim
 
