@@ -86,7 +86,8 @@ RUN mkdir -p /opt/repos && \
     git clone https://github.com/PowerShellMafia/PowerSploit.git /opt/repos/PowerSploit && \
     git clone https://github.com/diegocr/netcat.git /opt/repos/netcat && \
     git clone https://github.com/Greenwolf/ntlm_theft /opt/repos/ntlm_theft && \
-    git clone https://github.com/bitsadmin/wesng /opt/repos/wesng
+    git clone https://github.com/bitsadmin/wesng /opt/repos/wesng && \
+    git clone https://github.com/braunbearded/hacking-handbook /opt/repos/hacking-handbook
 
 # files for external usage
 RUN mkdir -p /opt/external && \ 
@@ -114,7 +115,8 @@ RUN mkdir -p /opt/external && \
     wget -O /opt/external/traitor-386 "$(curl -s https://api.github.com/repos/liamg/traitor/releases/latest | jq -r '.assets[].browser_download_url' | grep 'traitor-386')" && \
     wget -O /opt/external/traitor-amd64 "$(curl -s https://api.github.com/repos/liamg/traitor/releases/latest | jq -r '.assets[].browser_download_url' | grep 'traitor-amd64')" && \
     wget -O /opt/external/SharpWeb.exe "$(curl -s https://api.github.com/repos/djhohnstein/SharpWeb/releases/latest | jq -r '.assets[].browser_download_url' | grep '.*.exe')" && \
-    mkdir -p /opt/external/SharpCollection && git clone https://github.com/Flangvik/SharpCollection /opt/external/SharpCollection
+    mkdir -p /opt/external/SharpCollection && git clone https://github.com/Flangvik/SharpCollection /opt/external/SharpCollection && \
+    wget -O /opt/external/PrivescCheck.ps1 https://raw.githubusercontent.com/itm4n/PrivescCheck/master/PrivescCheck.ps1
 
 COPY ./default-config/bashrc /home/kali/.bashrc
 COPY ./default-config/zshrc /home/kali/.zshrc
