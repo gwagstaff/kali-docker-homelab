@@ -19,7 +19,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # bash
     bash-completion \
     # programming
-    python3 python3-pip python2 cargo python3-dev python3-venv default-jdk npm golang yarn \
+    python3 python3-pip python2 cargo python3-dev python3-venv default-jdk npm golang \
     # recon / web
     gobuster dirb dirbuster nikto whatweb wkhtmltopdf burpsuite zaproxy ffuf \
     nmap wfuzz finalrecon sqlmap wpscan sslscan smtp-user-enum feroxbuster \
@@ -131,6 +131,7 @@ RUN mkdir -p /usr/local/bin && \
     wget -O /usr/local/bin/gitfinder.py https://raw.githubusercontent.com/internetwache/GitTools/master/Finder/gitfinder.py && chmod +x /usr/local/bin/gitfinder.py && \
     wget -O /usr/local/bin/enum4linux-ng.py https://raw.githubusercontent.com/cddmp/enum4linux-ng/master/enum4linux-ng.py && chmod +x /usr/local/bin/enum4linux-ng.py && \
     gem install evil-winrm && \
+    npm install -g yarn && \
     git clone https://github.com/pwndbg/pwndbg /home/kali/.pwndbg && cd /home/kali/.pwndbg && /home/kali/.pwndbg/setup.sh && echo "source /home/kali/.pwndbg/gdbinit.py" >> /home/kali/.gdbinit && \
     chown -R kali:kali /home/kali /usr/share/zaproxy && \
     apt -y autoclean && apt -y autoremove && apt -y clean
