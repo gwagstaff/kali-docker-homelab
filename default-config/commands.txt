@@ -3,27 +3,27 @@ ff
 zaproxy
 vnc_start
 vnc_stop
-share
-urldecode
-urlencode
-sshgen # generate ssh keys
+share # start python webserver
+eur # url encode
+dur # url decode
+genssh # generate ssh keys
 interfaceip # get main interface ip
-eh # edit /etc/hosts
-sp # searchsploit
+eeh # edit /etc/hosts
+spo # searchsploit
 ncl # netcat listen
 phpwebsh # print php webshell
 brev # print bash reverse shell
-portscan # default rustscan port
-ni # nikto scan
-er # export rhost
-ffuf_web # default web discovery
-ffuf_vhost # default vhost discovery
-dl_curr # generate download command for files in current dir
-dl_curr_sel # generate download command for files in current dir and filter with fzf
-copy_file # copy commen files
-edit_command # read string vom stdin; edit in $EDITOR; run 
-edit_history # edit command from history and run
-show_commands # show this list
+psc # default rustscan port
+nik # nikto scan
+srh # export rhost
+ffw # default web discovery
+ffv # default vhost discovery
+dcu # generate download command for files in current dir
+dcus # generate download command for files in current dir and filter with fzf
+cef # copy commen files
+eco # read string vom stdin; edit in $EDITOR; run 
+ehi # edit command from history and run
+sco # show this list
 lsa # long listing
 md # mkdir with parent
 rrm # rm recursively
@@ -32,3 +32,5 @@ e # open lvim
 update_repos # update repos in /opt/repos
 update_external_tools # update external tools in /opt/external
 shb # search in hacking handbook
+smbserver # start impacket smbserver
+aff # analyse summary.json in current dir
