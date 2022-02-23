@@ -14,12 +14,10 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # basic
     man-db software-properties-common wget build-essential git unzip curl atool \
     file build-essential ssh tree vim unrar rar less fuse \
-    # zsh
-    zsh zsh-autosuggestions zsh-syntax-highlighting \
-    # bash
-    bash-completion \
+    # shells
+    zsh zsh-autosuggestions zsh-syntax-highlighting bash-completion \
     # programming
-    python3 python3-pip python2 cargo python3-dev python3-venv default-jdk npm golang \
+    python3 python3-pip python2 cargo python3-dev python3-venv default-jdk npm golang shfmt shellcheck \
     # recon / web
     gobuster dirb dirbuster nikto whatweb wkhtmltopdf burpsuite zaproxy ffuf \
     nmap wfuzz finalrecon sqlmap wpscan sslscan smtp-user-enum feroxbuster \
@@ -47,7 +45,6 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     onesixtyone && \ 
     # clear apt cache/packages
     apt -y autoclean && apt -y autoremove && apt -y clean
-
 
     # General
 RUN setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap && \
