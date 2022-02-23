@@ -20,7 +20,7 @@ ffw # default web discovery
 ffv # default vhost discovery
 dcu # generate download command for files in current dir
 dcus # generate download command for files in current dir and filter with fzf
-cef # copy commen files
+cef # copy external files
 eco # read string vom stdin; edit in $EDITOR; run 
 ehi # edit command from history and run
 sco # show this list
