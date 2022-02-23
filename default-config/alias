@@ -37,11 +37,13 @@ ehi() {
 cef() {
   dest="$1"
   [ "$1" = "" ] && dest="$(pwd)"
-  files="$({ find /opt/external -type f; cat "$HOME/.config/files.txt"; } | fzf -m)"
+  files="$({ find /opt/external -not -iwholename '*.git*' -type f; cat "$HOME/.config/files.txt"; } | fzf -m)"
   echo "$files" | while read -r f; do
-    file_name="$(basename "$f")"
-    cp "$f" "$dest/$file_name"
-    echo "$f copied to $dest/$file_name"
+    if [ -f "$f" ]; then
+      file_name="$(basename "$f")"
+      cp "$f" "$dest/$file_name"
+      echo "$f copied to $dest/$file_name"
+    fi
   done
 }
 
