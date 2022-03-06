@@ -12,7 +12,7 @@ eeh # edit /etc/hosts
 spo # searchsploit
 ncl # netcat listen
 phpwebsh # print php webshell
-brev # print bash reverse shell
+bashrev # print bash reverse shell
 psc # default rustscan port
 nik # nikto scan
 srh # export rhost
@@ -34,3 +34,6 @@ update_external_tools # update external tools in /opt/external
 shb # search in hacking handbook
 smbserver # start impacket smbserver
 aff # analyse summary.json in current dir
+chi # start chisel connection
+pve # create and switch to python virtual env
+crh # crack hash
