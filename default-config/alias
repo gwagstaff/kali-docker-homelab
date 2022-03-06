@@ -13,6 +13,7 @@ alias ls="lsd"
 alias lsa="ls -la"
 alias md="mkdir -p"
 alias aff="jq -r '.results[] | [.status, .url, .resultfile] | @tsv' ./summary.json" # Analyse FFuf
+alias rrm="rm -r"
 
 # Edit COmmand
 eco() {
@@ -309,7 +310,7 @@ pve() {
 }
 
 # CRack Hash
-cra() {
+crh() {
   [ "$1" == "" ] && echo "Usage: cha <path to file with hash>" && return
   nth --no-banner --file "$1"
   echo "Crack with hashcat:"
