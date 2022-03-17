@@ -13,7 +13,8 @@ spo # searchsploit
 ncl # netcat listen
 phpwebsh # print php webshell
 bashrev # print bash reverse shell
-psc # default rustscan port
+pst # tcp rustscan
+psu # udp rustscan
 nik # nikto scan
 srh # export rhost
 ffw # default web discovery
@@ -37,3 +38,4 @@ aff # analyse summary.json in current dir
 chi # start chisel connection
 pve # create and switch to python virtual env
 crh # crack hash
+enumsmb # enumerate smb server
