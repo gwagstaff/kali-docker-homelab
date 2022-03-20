@@ -27,4 +27,4 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: braunbearded/kali-docker:latest,braunbearded/kali-docker:${{GITHUB_SHA::7}}
+          tags: braunbearded/kali-docker:latest,braunbearded/kali-docker:${GITHUB_SHA}
