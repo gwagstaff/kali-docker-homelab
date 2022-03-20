@@ -31,7 +31,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     kali-desktop-xfce dbus-x11 x11vnc xvfb novnc \
     # network
     nfs-common netcat-traditional tnftp lftp iproute2 iputils-ping telnet net-tools snmp \
-    wireshark traceroute tcpdump chisel \
+    wireshark traceroute tcpdump chisel tor proxychains \
     # dns
     dnsrecon whois dnsutils \
     # windows
