@@ -36,7 +36,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     dnsrecon whois dnsutils \
     # windows
     crackmapexec python3-impacket enum4linux passing-the-hash samba smbclient \
-    smbmap responder impacket-scripts bloodhound \
+    smbmap responder impacket-scripts bloodhound rlwrap \
     # other
     neovim remmina remmina-plugin-rdp  firefox-esr seclists wordlists grc ranger \
     xclip fzf ripgrep cewl jq redis-tools default-mysql-server \
