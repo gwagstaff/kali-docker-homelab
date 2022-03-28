@@ -327,50 +327,52 @@ crh() {
 }
 
 enumsmb() {
-  [ "$1" = "" ] && echo "Usage: enumsmb <ip> [domain]" && return
-  users=",nobody,admin,administrator,root"
-  echo "Running: nbtscan \"$1\""
-  nbtscan "$1"
-  echo "Running: smbmap -H \"$1\""
-  smbmap -H "$1"
-  echo "Running: smbmap -H \"$1\" -u null -p null"
-  smbmap -H "$1" -u null -p null
-  echo "Running: smbmap -H \"$1\" -u guest"
-  smbmap -u guest -H "$1"
-  echo "Running: crackmapexec smb \"$1\"" || true
-  crackmapexec smb "$1"
-  echo "Running: rpcclient \"$1\""
-  rpcclient "$1"
-  echo "$users" | tr "," "\n" | xargs -I '{}' sh -c \ 
-    "echo \"Running: smbmap -u '{}' -p '' -H \"$1\"\"; \
+	[ "$1" = "" ] && echo "Usage: enumsmb <ip> [domain]" && return
+	users=",nobody,admin,administrator,root,guest,null,anonymous"
+	echo "########### Running: nbtscan \"$1\" ###########"
+	nbtscan "$1"
+	echo "########### Running: smbmap -H \"$1\" ###########"
+	smbmap -H "$1"
+	echo "########### Running: smbmap -H \"$1\" -u null -p null ###########"
+	smbmap -H "$1" -u null -p null
+	echo "########### Running: smbmap -H \"$1\" -u guest ###########"
+	smbmap -u guest -H "$1"
+	echo "########### Running: crackmapexec smb \"$1\" ###########"
+	crackmapexec smb "$1"
+	echo "########### Running: rpcclient -U '' -N -c 'querydispinfo' \"$1\" ###########"
+	rpcclient -U '' -N -c 'querydispinfo' "$1"
+	echo "$users" | tr "," "\n" | xargs -I '{}' sh -c \
+		"echo \"########### Running: smbmap -u '{}' -p '' -H \"$1\" ###########\"; \
     smbmap -u '{}' -p '' -H \"$1\"; \
-    echo \"Running: smbmap -u '{}' -p '{}' -H \"$1\"\"; \
+    echo \"########### Running: smbmap -u '{}' -p '{}' -H \"$1\" ###########\"; \
     smbmap -u '{}' -p '{}' -H \"$1\"; \
-    echo \"Running: crackmapexec smb \"$1\" --pass-pol -u '{}' -p ''\"; \
+    echo \"########### Running: crackmapexec smb \"$1\" --pass-pol -u '{}' -p '' ###########\"; \
     crackmapexec smb \"$1\" --pass-pol -u '{}' -p '' 2>/dev/null; \
-    echo \"Running: crackmapexec smb \"$1\" --pass-pol -u '{}' -p '{}'\"; \
+    echo \"########### Running: crackmapexec smb \"$1\" --pass-pol -u '{}' -p '{}' ###########\"; \
     crackmapexec smb \"$1\" --pass-pol -u '{}' -p '{}' 2>/dev/null; \
-    echo \"Running: rpcclient -U '{}' \"$1\"\"; rpcclient -U '{}' \"$1\""
-  echo "Running: smbclient -N -L //\"$1\""
-  smbclient -N -L //"$1"
-  echo "Running: smbclient -N //\"$1\"/ --option=\"client min protocol\"=LANMAN1"
-  smbclient -N //"$1"/ --option="client min protocol"=LANMAN1
-  echo "Running: impacket-getArch -target \"$1\""
-  impacket-getArch -target "$1"
-  echo "Running: enum4linux-ng.py -a \"$1\""
-  enum4linux-ng.py -A "$1"
-  echo "Running: nmap -p 139,445 -vv -Pn --script=smb-vuln-cve2009-3103.nse,smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse,smb-vuln-ms10-054.nse,smb-vuln-ms10-061.nse,smb-vuln-ms17-010.nse \"$1\""
-  nmap -p 139,445 -vv -Pn --script=smb-vuln-cve2009-3103.nse,smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse,smb-vuln-ms10-054.nse,smb-vuln-ms10-061.nse,smb-vuln-ms17-010.nse "$1"
-  echo "Running: nmap --script smb-vuln* -Pn -p 139,445 \"$1\""
-  nmap --script smb-vuln* -Pn -p 139,445 "$1"
-  if [ ! "$2" = "" ]; then 
-    echo "Running: impacket-GetADUsers -dc-ip \"$1\" \"$2/\" -all"
-    impacket-GetADUsers -dc-ip "$1" "$2/" -all
-    echo "Running: impacket-GetNPUsers -dc-ip \"$1\" -request \"$2/\" -format hashcat"
-    impacket-GetNPUsers -dc-ip "$1" -request "$2/" -format hashcat
-    echo "Running: impacket-GetUserSPNs -dc-ip \"$1\" -request \"$2/\""
-    impacket-GetUserSPNs -dc-ip "$1" -request "$2/"
-  fi
-  echo "Do you want to bruteforce via SMB?"
-  echo "crackmapexec smb \"$1\" -u pot-user.txt -p pot-passwords.txt --continue-on-success"
+    echo \"########### Running: echo '' | rpcclient -U '{}' -c 'querydispinfo' \"$1\" ###########\"; \
+    echo '' | rpcclient -U '{}' -c 'querydispinfo' \"$1\"
+    echo \"########### Running: echo '{}' | rpcclient -U '{}' -c 'querydispinfo' \"$1\" ###########\"; \
+    echo '{}' | rpcclient -U '{}' -c 'querydispinfo' \"$1\""
+	echo "########### Running: smbclient -N -L //\"$1\" ###########"
+	smbclient -N -L //"$1"
+	echo "########### Running: smbclient -N //\"$1\"/ --option=\"client min protocol\"=LANMAN1 ###########"
+	smbclient -N //"$1"/ --option="client min protocol"=LANMAN1
+	echo "########### Running: impacket-getArch -target \"$1\" ###########"
+	impacket-getArch -target "$1"
+	echo "########### Running: enum4linux-ng.py -a \"$1\" ###########"
+	enum4linux-ng.py -A "$1"
+	echo "########### Running: nmap --script \"smb-enum* or smb-vuln*\" -Pn -p 139,445 \"$1\" ###########"
+	nmap --script "smb-enum* or smb-vuln*" -Pn -p 139,445 "$1"
+	if [ ! "$2" = "" ]; then
+		echo "########### Running: impacket-GetADUsers -dc-ip \"$1\" \"$2/\" -all ###########"
+		impacket-GetADUsers -dc-ip "$1" "$2/" -all
+		echo "########### Running: impacket-GetNPUsers -dc-ip \"$1\" -request \"$2/\" -format hashcat ###########"
+		impacket-GetNPUsers -dc-ip "$1" -request "$2/" -format hashcat
+		echo "########### Running: impacket-GetUserSPNs -dc-ip \"$1\" -request \"$2/\" ###########"
+		impacket-GetUserSPNs -dc-ip "$1" -request "$2/"
+	fi
+	echo "########### Auto Enum down ###########"
+	echo "Do you want to bruteforce via SMB?"
+	echo "crackmapexec smb \"$1\" -u pot-user.txt -p pot-passwords.txt --continue-on-success"
 }
