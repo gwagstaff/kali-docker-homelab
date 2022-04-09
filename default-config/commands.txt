@@ -34,8 +34,10 @@ update_repos # update repos in /opt/repos
 update_external_tools # update external tools in /opt/external
 shb # search in hacking handbook
 smbserver # start impacket smbserver
+ssmbserver # start secure (password) impacket smbserver
 aff # analyse summary.json in current dir
 chi # start chisel connection
 pve # create and switch to python virtual env
 crh # crack hash
 enumsmb # enumerate smb server
+bh # start neo4j and bloodhound
