@@ -7,6 +7,7 @@ LABEL version="2.0" \
 # install offical packages
 RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" >> /etc/apt/sources.list && \
     echo "deb http://ftp2.nluug.nl/os/Linux/distr/kali kali-rolling main contrib non-free" >> /etc/apt/sources.list && \
+    # echo "deb http://http.kali.org/kali kali-bleeding-edge main contrib non-free" >> /etc/apt/sources.list && \
     apt -y update && apt -y upgrade && \
     echo "wireshark-common wireshark-common/install-setuid boolean true" | \
         debconf-set-selections && \
@@ -17,7 +18,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # shells
     zsh zsh-autosuggestions zsh-syntax-highlighting bash-completion \
     # programming
-    python3 python3-pip python2 cargo python3-dev python3-venv default-jdk npm golang shfmt shellcheck \
+    python3 python3-pip python2 cargo python3-dev python3-venv default-jdk npm golang shfmt shellcheck python3-virtualenv \
     # recon / web
     gobuster dirb dirbuster nikto whatweb wkhtmltopdf burpsuite zaproxy ffuf \
     nmap wfuzz finalrecon sqlmap wpscan sslscan smtp-user-enum feroxbuster \
@@ -26,7 +27,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # binary exploitation
     strace ltrace binwalk ghidra \
     # exploitation
-    metasploit-framework exploitdb pwncat \
+    metasploit-framework exploitdb pwncat nuclei \
     # gui/vnc
     kali-desktop-xfce dbus-x11 x11vnc xvfb novnc \
     # network
@@ -38,7 +39,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     crackmapexec python3-impacket enum4linux passing-the-hash samba smbclient \
     smbmap responder impacket-scripts bloodhound rlwrap \
     # other
-    neovim remmina remmina-plugin-rdp  firefox-esr seclists wordlists grc ranger \
+    remmina remmina-plugin-rdp  firefox-esr seclists wordlists grc ranger \
     xclip fzf ripgrep cewl jq redis-tools default-mysql-server \
     # TODO check
     psmisc swaks libssl-dev libffi-dev nbtscan oscanner sipvicious tnscmd10g \
@@ -65,7 +66,7 @@ RUN setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap && \
 RUN python3 -m pip install updog name-that-hash search-that-hash && \
     python3 -m pip install git+https://github.com/Tib3rius/AutoRecon.git && \
     python3 -m pip install git+https://github.com/calebstewart/paramiko && \
-    python3 -m pip install ciphey --upgrade && \
+    # python3 -m pip install ciphey --upgrade && \
     wget -O /tmp/get-pip.py "https://bootstrap.pypa.io/pip/2.7/get-pip.py" && python2 /tmp/get-pip.py && rm /tmp/get-pip.py
 
 # clone usefull repos
@@ -121,8 +122,9 @@ COPY ./default-config/zshrc /home/kali/.zshrc
 
 # other tools
 RUN mkdir -p /usr/local/bin && \
-    wget -O /tmp/rustscan.deb "$(curl -s https://api.github.com/repos/RustScan/RustScan/releases/latest | jq -r '.assets[].browser_download_url' | grep 'rustscan_.*_amd64')" && apt install /tmp/rustscan.deb && rm /tmp/rustscan.deb && \
-    wget -O /tmp/nuclei.zip "$(curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest | jq -r '.assets[].browser_download_url' | grep 'nuclei_.*_linux_amd64')" && unzip /tmp/nuclei.zip -d /usr/local/bin && rm /tmp/nuclei.zip && \
+    wget -O /tmp/rustscan.deb "$(curl -s https://api.github.com/repos/RustScan/RustScan/releases/tags/2.0.1 | jq -r '.assets[].browser_download_url' | grep 'rustscan_.*_amd64')" && apt install /tmp/rustscan.deb && rm /tmp/rustscan.deb && \
+    wget -O /tmp/nvim.deb "$(curl -s https://api.github.com/repos/neovim/neovim/releases/latest | jq -r '.assets[].browser_download_url' | grep -E 'nvim\-linux64\.deb$')" && apt install /tmp/nvim.deb && rm /tmp/nvim.deb && \
+    # wget -O /tmp/nuclei.zip "$(curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest | jq -r '.assets[].browser_download_url' | grep 'nuclei_.*_linux_amd64')" && unzip /tmp/nuclei.zip -d /usr/local/bin && rm /tmp/nuclei.zip && \
     wget -O /usr/local/bin/findomain https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux && chmod +x /usr/local/bin/findomain && \
     wget -O /usr/local/bin/gitdumper.sh https://raw.githubusercontent.com/internetwache/GitTools/master/Dumper/gitdumper.sh && chmod +x /usr/local/bin/gitdumper.sh && \
     wget -O /usr/local/bin/extractor.sh https://raw.githubusercontent.com/internetwache/GitTools/master/Extractor/extractor.sh && chmod +x /usr/local/bin/extractor.sh && \
