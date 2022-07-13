@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - 'master'
+  pull_request:
+    branches:
+      - 'master'
   workflow_dispatch:
 
 jobs:
@@ -27,4 +30,4 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: braunbearded/kali-docker:latest,braunbearded/kali-docker:${{ github.sha }}
+          tags: naphal/kali-docker:latest,naphal/kali-docker:${{ github.sha }}

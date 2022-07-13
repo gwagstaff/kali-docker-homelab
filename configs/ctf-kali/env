@@ -2,7 +2,6 @@
 
 export TERM=xterm-256color
 export TMPDIR=/tmp
-export FAKETIME="+1h"
 export EDITOR="/home/kali/.local/bin/lvim"
 export NMAP_PRIVILEGED=""
 export _JAVA_AWT_WM_NONREPARENTING=1 # needed for java gui programs

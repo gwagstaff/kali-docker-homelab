@@ -203,20 +203,6 @@ ffv() {
   ffuf -c -u "${proto}://${ressource}:${port}" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -o "'$ffuf_out/summary.json'" -od "$ffuf_out" -H "Host: FUZZ.${ressource}" -fs ${filter_size} $@
 }
 
-vnc_start() {
-  echo "Starting vnc"
-  (x11vnc -nopw -N -forever -env FD_PROG=startxfce4 -create \
-      -gone 'killall Xvfb' -env X11VNC_CREATE_GEOM="${1:-1024x1080x24}" \
-      -env X11VNC_FINDDISPLAY_ALWAYS_FAILS=1 > /dev/null 2>&1 &)
-  (/usr/share/novnc/utils/launch.sh > /dev/null 2>&1 &)
-  echo "Visit http://kali-docker:6080/vnc.html"
-}
-
-vnc_stop() {
-  echo "Stopping vnc"
-  (pkill websockify > /dev/null 2>&1)
-  (pkill x11vnc > /dev/null 2>&1)
-}
 
 share() {
   #ip -4 -o addr | awk '{print sprintf("%s %s", $2, $4)}' && updog -d "$PWD"

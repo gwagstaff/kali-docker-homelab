@@ -1,20 +1,18 @@
 FROM kalilinux/kali-rolling
 
-LABEL version="2.0" \
-      author="Braunbearded" \
-      description="Custom Kali Linux docker container"
+LABEL maintainer="naphal@naphal.net"
 
 # install offical packages
 RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" >> /etc/apt/sources.list && \
-    echo "deb http://ftp2.nluug.nl/os/Linux/distr/kali kali-rolling main contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb http://mirrors.ocf.berkeley.edu/kali kali-rolling main contrib non-free" >> /etc/apt/sources.list && \
     # echo "deb http://http.kali.org/kali kali-bleeding-edge main contrib non-free" >> /etc/apt/sources.list && \
-    apt -y update && apt -y upgrade && \
+    apt-get -y update && apt-get -y upgrade && \
     echo "wireshark-common wireshark-common/install-setuid boolean true" | \
         debconf-set-selections && \
-    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
     # basic
     man-db software-properties-common wget build-essential git unzip curl atool \
-    file build-essential ssh tree vim unrar rar less fuse \
+    file build-essential ssh tree vim less fuse \
     # shells
     zsh zsh-autosuggestions zsh-syntax-highlighting bash-completion \
     # programming
@@ -29,10 +27,10 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # exploitation
     metasploit-framework exploitdb pwncat nuclei \
     # gui/vnc
-    kali-desktop-xfce dbus-x11 x11vnc xvfb novnc \
+    kali-desktop-xfce tigervnc-standalone-server tigervnc-tools\
     # network
     nfs-common netcat-traditional tnftp lftp iproute2 iputils-ping telnet net-tools snmp \
-    wireshark traceroute tcpdump chisel tor proxychains \
+    wireshark traceroute tcpdump chisel tor proxychains libcap2-bin \
     # dns
     dnsrecon whois dnsutils \
     # windows
@@ -43,15 +41,13 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     xclip fzf ripgrep cewl jq redis-tools default-mysql-server \
     # TODO check
     psmisc swaks libssl-dev libffi-dev nbtscan oscanner sipvicious tnscmd10g \
-    onesixtyone && \ 
+    onesixtyone && \
     # clear apt cache/packages
-    apt -y autoclean && apt -y autoremove && apt -y clean
+    apt-get -y autoclean && apt-get -y autoremove && apt-get -y clean
 
     # General
 RUN setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap && \
     sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen && \
-    # setup metasploit database
-    service postgresql start && msfdb init && \
     # create user
     echo "kali ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     useradd --create-home --shell /bin/zsh --user-group --groups sudo kali && \
@@ -59,14 +55,12 @@ RUN setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap && \
     mkdir -p /etc/zsh/zshrc.d && \
     printf 'if [ -d /etc/zsh/zshrc.d ]; then\n  for i in /etc/zsh/zshrc.d/*; do\n    if [ -r $i ]; then\n      . $i\n    fi\n  done\n  unset i\nfi' >> /etc/zsh/zshrc && \
     tar -xf /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt.tar.gz \
-        -C /usr/share/seclists/Passwords/Leaked-Databases/ && \
-    git clone https://github.com/wolfcw/libfaketime /tmp/libfaketime && make -C /tmp/libfaketime/src install && rm -rf /tmp/libfaketime
+        -C /usr/share/seclists/Passwords/Leaked-Databases/
 
 # install python packages
 RUN python3 -m pip install updog name-that-hash search-that-hash && \
     python3 -m pip install git+https://github.com/Tib3rius/AutoRecon.git && \
     python3 -m pip install git+https://github.com/calebstewart/paramiko && \
-    # python3 -m pip install ciphey --upgrade && \
     wget -O /tmp/get-pip.py "https://bootstrap.pypa.io/pip/2.7/get-pip.py" && python2 /tmp/get-pip.py && rm /tmp/get-pip.py
 
 # clone usefull repos
@@ -117,8 +111,8 @@ RUN mkdir -p /opt/external && \
     wget -O /opt/external/PrivescCheck.ps1 https://raw.githubusercontent.com/itm4n/PrivescCheck/master/PrivescCheck.ps1 && \
     wget -O /opt/external/SharpHound.exe https://github.com/BloodHoundAD/BloodHound/raw/master/Collectors/SharpHound.exe
 
-COPY ./default-config/bashrc /home/kali/.bashrc
-COPY ./default-config/zshrc /home/kali/.zshrc
+COPY configs/ctf-kali/bashrc /home/kali/.bashrc
+COPY configs/ctf-kali/zshrc /home/kali/.zshrc
 
 # other tools
 RUN mkdir -p /usr/local/bin && \
@@ -143,3 +137,7 @@ WORKDIR /home/kali
 # https://github.com/noraj/haiti            # hashidentifier
 # Nessus
 # mariadb-client # currently broken
+
+COPY configs/ctf-kali/guacsetup.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT["/entrypoint.sh"]

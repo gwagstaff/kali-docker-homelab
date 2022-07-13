@@ -1,30 +1,37 @@
-version: "3.4"
+version: "3.9"
+
+secrets:
+  kali-vnc-passwd:
+    file: ./secrets/kali_vnc_passwd.txt
 
 services:
-  kali:
-    image: braunbearded/kali-docker:latest
+  kali-ctf:
+    image: naphal45/kali-docker:latest
+    env_file:
+      - secrets/kali.env
+    secrets:
+      - kali-vnc-passwd
+    ports:
+      - "5900:5900"
     build:
       context: .
       dockerfile: Dockerfile
-    network_mode: host
     user: kali
     volumes:
-      - ./start.sh:/start.sh:ro
+      - ./configs/ctf-kali/start.sh:/start.sh:ro
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - ./default-config/env:/etc/zsh/zshrc.d/100-env:ro
-      - ./default-config/zshrc:/etc/zsh/zshrc.d/800-zshrc:ro
-      - ./default-config/alias:/etc/zsh/zshrc.d/900-alias:ro
-      - ./default-config/userstartup.sh:/etc/zsh/zshrc.d/999-startup:ro # last thing that will be executed
-      - ./default-config/files.txt:/home/kali/.config/files.txt:ro
-      - ./default-config/commands.txt:/home/kali/.config/commands.txt:ro
-      - ./default-config/repos.txt:/home/kali/.config/repos.txt:ro
-      # Put your rc in /etc/zsh/zshrc.d to source them automaticly; see override file
+      - ./configs/ctf-kali/env:/etc/zsh/zshrc.d/100-env:ro
+      - ./configs/ctf-kali/zshrc:/etc/zsh/zshrc.d/800-zshrc:ro
+      - ./configs/ctf-kali/alias:/etc/zsh/zshrc.d/900-alias:ro
+      - ./configs/ctf-kali/files.txt:/home/kali/.config/files.txt:ro
+      - ./configs/ctf-kali/commands.txt:/home/kali/.config/commands.txt:ro
+      - ./configs/ctf-kali/repos.txt:/home/kali/.config/repos.txt:ro
+#      - ./configs/ctf-kali/guacsetup.sh:/etc/zsh/zshrc.d/945-guacsetup:ro # vnc setup
+      - ./configs/ctf-kali/userstartup.sh:/etc/zsh/zshrc.d/999-startup:ro # last thing that will be executed
     tty: true
     stdin_open: true
     privileged: true
-    hostname: kali-docker
-    container_name: kali-docker
+    hostname: kali-ctf
     environment:
       - DISPLAY
-      - FAKETIME="+1h"
-      #- LD_PRELOAD=/usr/local/lib/faketime/libfaketime.so.1 # this breaks to many stuff
+
