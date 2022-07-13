@@ -140,4 +140,4 @@ WORKDIR /home/kali
 
 COPY configs/ctf-kali/guacsetup.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-ENTRYPOINT["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
