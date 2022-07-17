@@ -27,7 +27,7 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # exploitation
     metasploit-framework exploitdb pwncat nuclei \
     # gui/vnc
-    kali-desktop-xfce tigervnc-standalone-server tigervnc-tools\
+    kali-desktop-xfce tightvncserver dbus dbus-x11 xfonts-base\
     # network
     nfs-common netcat-traditional tnftp lftp iproute2 iputils-ping telnet net-tools snmp \
     wireshark traceroute tcpdump chisel tor proxychains libcap2-bin \
@@ -39,7 +39,6 @@ RUN echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free" 
     # other
     remmina remmina-plugin-rdp  firefox-esr seclists wordlists grc ranger \
     xclip fzf ripgrep cewl jq redis-tools default-mysql-server \
-    # TODO check
     psmisc swaks libssl-dev libffi-dev nbtscan oscanner sipvicious tnscmd10g \
     onesixtyone && \
     # clear apt cache/packages
@@ -132,12 +131,7 @@ RUN mkdir -p /usr/local/bin && \
 
 WORKDIR /home/kali
 
-# Tools not installed by default
-# https://github.com/zardus/ctf-tools.git   # ctf tools
-# https://github.com/noraj/haiti            # hashidentifier
-# Nessus
-# mariadb-client # currently broken
-
-COPY configs/ctf-kali/guacsetup.sh /entrypoint.sh
+# setup entrypoint.sh that spins up vnc server on start
+COPY ./configs/ctf-kali/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
